@@ -175,67 +175,263 @@ const CustomCursor = () => {
   );
 };
 
-// --- Modal Component ---
+// --- 1. KOMPONEN KOTAK KECIL (NODE) - LEBIH RAPI ---
+const NodeBox = ({ role, name, color = 'blue', width = 'w-32 md:w-40' }) => {
+  const bgColors = {
+    orange: 'bg-[#F7941D]',
+    green: 'bg-[#22c55e]',
+    blue: 'bg-[#0000cd]',
+  };
+
+  return (
+    <div className={`relative z-20 flex flex-col items-center ${width} group`}>
+      <div
+        className={`
+        border-2 border-black shadow-[4px_4px_0px_0px_#000] 
+        text-center transition-transform hover:-translate-y-1 cursor-pointer w-full
+        ${bgColors[color] || 'bg-white'}
+      `}
+      >
+        <div className="py-1 px-1 border-b-2 border-black/20 bg-black/10">
+          <p className="text-[9px] font-bold text-white uppercase tracking-wider leading-tight">{role}</p>
+        </div>
+        <div className="py-2 px-1 bg-white min-h-[40px] flex items-center justify-center">
+          <p className="text-[10px] md:text-xs font-bold text-black leading-tight line-clamp-2">{name}</p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- 2. LAYOUT DIAGRAM KHUSUS (BPH CHART - FINAL PRECISION) ---
+const BphChartLayout = ({ data }) => {
+  if (!data) return null;
+
+  // Extraction Data
+  const ketua = data;
+  const wakil = data.children?.[0];
+
+  const groupSekBen = wakil?.children?.[0]?.children || [];
+  const sek1 = groupSekBen[0];
+  const sek2 = groupSekBen[1];
+  const ben1 = groupSekBen[2];
+  const ben2 = groupSekBen[3];
+
+  const groupDivisi = wakil?.children?.[1]?.children || [];
+  const humas1 = groupDivisi[0];
+  const humas2 = groupDivisi[1];
+  const koor1 = groupDivisi[2];
+  const koor2 = groupDivisi[3];
+  const pdd1 = groupDivisi[4];
+  const pdd2 = groupDivisi[5];
+  const psdm1 = groupDivisi[6];
+  const psdm2 = groupDivisi[7];
+
+  const groupUkm = wakil?.children?.[2]?.children || [];
+
+  return (
+    <div className="flex flex-col items-center min-w-[1200px] pt-10 pb-24 px-10 font-['Space_Grotesk']">
+      {/* === LAYER 1: KETUA & TULANG PUNGGUNG UTAMA === */}
+      <div className="relative flex flex-col items-center z-20">
+        <NodeBox role="KETUA BPH" name={ketua.name} color="orange" />
+      </div>
+
+      {/* GARIS TULANG PUNGGUNG (THE SPINE) */}
+      {/* Ini adalah satu garis panjang yang menyambungkan Ketua sampai Divisi */}
+      {/* Absolute terhadap container utama agar tidak terputus */}
+      <div className="relative w-full flex justify-center">
+        {/* Panjang garis diatur 26rem agar sampai ke palang Divisi */}
+        <div className="absolute -top-2 w-1 h-[26rem] bg-black z-0"></div>
+
+        {/* === LAYER 2: WAKIL KETUA (KIRI) === */}
+        {/* Margin top untuk memberi jarak dari Ketua */}
+        <div className="absolute top-12 right-[50%] pr-0 flex items-center z-20">
+          <NodeBox role="WAKIL KETUA" name={wakil?.name} color="orange" />
+
+          {/* Konektor Wakil ke Spine */}
+          <div className="w-12 h-1 bg-black"></div>
+          {/* Panah Penunjuk */}
+          <div className="w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[8px] border-l-black -ml-0.5"></div>
+        </div>
+      </div>
+
+      {/* === LAYER 3: SEKRETARIS & BENDAHARA === */}
+      {/* Margin top besar (mt-40) untuk memberi GAP dari Wakil Ketua */}
+      <div className="relative mt-40 w-[700px]">
+        {/* Palang Horizontal Sek-Ben */}
+        {/* Lebar fix 500px agar pas di tengah kotak Sek 1 dan Ben 1 */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-1 bg-black z-0"></div>
+
+        <div className="flex justify-between px-[50px]">
+          {' '}
+          {/* Padding agar box pas di ujung garis */}
+          {/* KIRI: SEKRETARIS */}
+          <div className="flex flex-col items-center gap-4 z-10">
+            {/* Konektor Kecil Turun */}
+            <div className="h-6 w-1 bg-black -mt-6"></div>
+            <NodeBox role={sek1?.role} name={sek1?.name} color="green" />
+            {/* Panah Turun ke Sek 2 */}
+            <div className="flex flex-col items-center -my-2">
+              <div className="h-4 w-1 bg-black"></div>
+              <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[8px] border-t-black"></div>
+            </div>
+            <NodeBox role={sek2?.role} name={sek2?.name} color="green" />
+          </div>
+          {/* KANAN: BENDAHARA */}
+          <div className="flex flex-col items-center gap-4 z-10">
+            {/* Konektor Kecil Turun */}
+            <div className="h-6 w-1 bg-black -mt-6"></div>
+            <NodeBox role={ben1?.role} name={ben1?.name} color="green" />
+            {/* Panah Turun ke Ben 2 */}
+            <div className="flex flex-col items-center -my-2">
+              <div className="h-4 w-1 bg-black"></div>
+              <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[8px] border-t-black"></div>
+            </div>
+            <NodeBox role={ben2?.role} name={ben2?.name} color="green" />
+          </div>
+        </div>
+      </div>
+
+      {/* === LAYER 4: DIVISI (4 KOLOM) === */}
+      <div className="relative mt-16 w-[1000px]">
+        {/* Palang Horizontal Divisi */}
+        {/* Lebar 800px agar pas menampung 4 kolom tanpa sisa */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-1 bg-black z-0"></div>
+
+        <div className="flex justify-center gap-12 pt-0">
+          {[
+            { r1: humas1, r2: humas2 },
+            { r1: koor1, r2: koor2, isKoor: true },
+            { r1: pdd1, r2: pdd2 },
+            { r1: psdm1, r2: psdm2 },
+          ].map((group, idx) => (
+            <div key={idx} className="flex flex-col items-center relative w-40 z-10">
+              {/* Konektor Turun dari Palang */}
+              <div className="h-8 w-1 bg-black -mt-8"></div>
+
+              <NodeBox role={group.r1?.role} name={group.r1?.name} color="blue" />
+
+              {/* Panah ke Bawah */}
+              <div className="flex flex-col items-center -my-2 relative z-0">
+                <div className="h-4 w-1 bg-black"></div>
+                <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[8px] border-t-black"></div>
+              </div>
+
+              <NodeBox role={group.r2?.role} name={group.r2?.name} color="blue" />
+
+              {/* === JALUR KE UKM (Hanya dari KOOR UKM) === */}
+              {group.isKoor && (
+                <div className="absolute top-[100%] left-1/2 -translate-x-1/2 flex flex-col items-center">
+                  {/* Garis Turun Panjang ke Area UKM */}
+                  <div className="w-1 h-12 bg-black"></div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* === LAYER 5: UKM (CONNECTED) === */}
+      {/* Container ini margin-top nya pas agar menyambung dengan garis Koor di atas */}
+      <div className="relative mt-12 w-full max-w-[1300px]">
+        {/* Palang Horizontal UKM */}
+        {/* Width full container, border top */}
+        <div className="border-t-4 border-black w-full absolute top-0 left-0 z-0"></div>
+
+        <div className="flex justify-between items-start pt-0">
+          {groupUkm.map((ukm, idx) => (
+            <div key={idx} className="flex flex-col items-center flex-1 relative z-10 px-2">
+              {/* Konektor Turun ke Box UKM */}
+              <div className="h-6 w-1 bg-black"></div>
+              <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[8px] border-t-black -mt-1 mb-1"></div>
+
+              <NodeBox role={ukm.role} name={ukm.name} color="blue" width="w-28" />
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// --- MODAL UTAMA (UPDATED: Fun Facts & Image Fix) ---
 const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
   if (!isOpen || !data) return null;
 
+  // Cek apakah ini data BPH Kampus (untuk mode diagram)
+  const isBphKampus = data.campus !== undefined;
+
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in fade-in duration-200">
-      <div className="bg-white border-4 border-black w-full max-w-5xl max-h-[90vh] overflow-y-auto relative shadow-[16px_16px_0px_0px_#F7941D]">
-        <button onClick={onClose} className="absolute top-4 right-4 bg-black text-white p-2 hover:bg-[#F7941D] hover:text-black transition-colors z-10">
-          <X size={24} />
-        </button>
-
-        <div className="p-6 md:p-8">
-          {/* Header */}
-          <div className="mb-8 border-b-4 border-black pb-4">
-            <span className="bg-[#005696] text-white px-3 py-1 font-mono text-xs md:text-sm uppercase mb-2 inline-block">{type === 'program' ? 'Program Kerja' : type === 'gallery' ? 'Moment' : data.role || 'Detail Anggota'}</span>
-            <h2 className="font-['Space_Grotesk'] text-3xl md:text-5xl font-black uppercase leading-none mt-2">{data.title || data.name}</h2>
+      <div className="bg-white border-4 border-black w-full max-w-7xl max-h-[95vh] overflow-hidden relative shadow-[16px_16px_0px_0px_#F7941D] flex flex-col">
+        {/* Fixed Header Modal */}
+        <div className="p-6 border-b-4 border-black bg-white flex justify-between items-start shrink-0 z-50">
+          <div>
+            <span className="bg-[#005696] text-white px-3 py-1 font-mono text-xs md:text-sm uppercase mb-2 inline-block">
+              {isBphKampus ? 'Struktur Wilayah' : type === 'program' ? 'Program Kerja' : type === 'gallery' ? 'Moment' : data.role || 'Detail Anggota'}
+            </span>
+            <h2 className="font-['Space_Grotesk'] text-2xl md:text-4xl font-black uppercase leading-none mt-2">{data.title || data.campus || data.name}</h2>
           </div>
+          <button onClick={onClose} className="bg-black text-white p-2 hover:bg-[#F7941D] hover:text-black transition-colors">
+            <X size={24} />
+          </button>
+        </div>
 
-          <div className="mt-4">
-            {/* --- TYPE: DEPARTMENT / KEMENKO --- */}
-            {data.coordinator && (
-              <div className="space-y-12">
-                {/* Coordinator Section */}
-                <div className="flex flex-col md:flex-row gap-8 items-start bg-[#f0f0f0] p-6 border-2 border-black">
-                  <div className="relative shrink-0 w-full md:w-auto text-center md:text-left">
-                    <img
-                      src={data.coordinator.img || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&q=80&w=400'}
-                      alt={data.coordinator.name}
-                      className="w-32 h-32 md:w-40 md:h-40 object-cover border-4 border-black shadow-[4px_4px_0px_0px_#000] mx-auto md:mx-0"
-                    />
-                    <div className="md:absolute -bottom-3 -right-3 bg-[#F7941D] text-black text-xs font-bold px-2 py-1 border-2 border-black inline-block mt-4 md:mt-0">COORD</div>
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-2xl font-black font-['Space_Grotesk']">{data.coordinator.name}</h3>
-                    <p className="font-mono text-sm text-gray-600 mt-1 mb-4">Koordinator {data.title}</p>
-                    <p className="font-['Inter'] text-base md:text-lg leading-relaxed mb-4">{data.desc}</p>
+        {/* Scrollable Content */}
+        <div className="overflow-y-auto overflow-x-hidden flex-1 p-6 bg-[#f0f0f0]">
+          {/* --- MODE: BPH KAMPUS STRUCTURE (FULL CHART) --- */}
+          {isBphKampus ? (
+            <div className="overflow-x-auto border-2 border-black bg-white bg-[url('https://www.transparenttextures.com/patterns/graphy.png')]">
+              {/* Render Diagram */}
+              <BphChartLayout data={data} />
 
-                    {/* Fun Fact for Coordinator */}
-                    <div className="bg-white border-2 border-black p-3 inline-block transform rotate-1">
-                      <p className="font-bold text-xs uppercase text-[#F7941D] flex items-center gap-1">
-                        <Sparkles size={12} /> Fun Fact
-                      </p>
-                      <p className="font-['Inter'] text-sm italic">"{data.coordinator.funFact || 'Suka begadang ngerjain proker.'}"</p>
+              <div className="p-4 text-center border-t-2 border-black bg-yellow-50 text-xs font-mono text-gray-500">*Geser ke samping untuk melihat seluruh struktur UKM</div>
+            </div>
+          ) : (
+            // --- MODE: REGULAR CONTENT ---
+            <div className="max-w-5xl mx-auto">
+              {/* 1. TAMPILAN UNTUK KEMENKO (COORDINATOR) */}
+              {data.coordinator && (
+                <div className="space-y-12">
+                  {/* Coordinator Section */}
+                  <div className="flex flex-col md:flex-row gap-8 items-start bg-[#f0f0f0] p-6 border-2 border-black">
+                    <div className="relative shrink-0 w-full md:w-auto text-center md:text-left">
+                      {/* IMAGE FIX: object-cover object-top */}
+                      <img
+                        src={data.coordinator.img || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&q=80&w=400'}
+                        alt={data.coordinator.name}
+                        className="w-32 h-32 md:w-40 md:h-40 object-cover object-top border-4 border-black shadow-[4px_4px_0px_0px_#000] mx-auto md:mx-0"
+                      />
+                      <div className="md:absolute -bottom-3 -right-3 bg-[#F7941D] text-black text-xs font-bold px-2 py-1 border-2 border-black inline-block mt-4 md:mt-0">COORD</div>
                     </div>
+                    <div className="flex-1">
+                      <h3 className="text-2xl font-black font-['Space_Grotesk']">{data.coordinator.name}</h3>
+                      <p className="font-mono text-sm text-gray-600 mt-1 mb-4">Koordinator {data.title}</p>
+                      <p className="font-['Inter'] text-base md:text-lg leading-relaxed mb-4">{data.desc}</p>
 
-                    {/* DYNAMIC SOCIAL MEDIA (COORDINATOR) */}
-                    <div className="pt-4 mt-4 border-t-2 border-black border-dashed">
-                      <h4 className="font-bold mb-2 font-mono uppercase text-xs text-gray-600">Connect</h4>
-                      <SocialLinksRender socials={data.coordinator.socials} />
+                      {/* FUN FACT (Kemenko) */}
+                      <div className="bg-white border-2 border-black p-3 inline-block transform rotate-1 mb-4">
+                        <p className="font-bold text-xs uppercase text-[#F7941D] flex items-center gap-1">
+                          <Sparkles size={12} /> Fun Fact
+                        </p>
+                        <p className="font-['Inter'] text-sm italic">"{data.coordinator.funFact || 'Suka begadang ngerjain proker.'}"</p>
+                      </div>
+
+                      {/* Social Media */}
+                      <div className="pt-4 mt-2 border-t-2 border-black border-dashed">
+                        <h4 className="font-bold mb-2 font-mono uppercase text-xs text-gray-600">Connect</h4>
+                        <SocialLinksRender socials={data.coordinator.socials} />
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                {/* Ministries Grid */}
-                <div>
-                  <h3 className="text-xl md:text-2xl font-black mb-6 flex items-center gap-2 border-l-8 border-[#005696] pl-4">STRUKTUR KEMENTERIAN</h3>
+                  {/* Ministries Grid */}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {data.ministries.map((min, idx) => (
+                    {data.ministries?.map((min, idx) => (
                       <div key={idx} onClick={() => onSwitchData(min)} className="border-2 border-black p-4 hover:bg-black hover:text-white transition-colors group flex items-center gap-4 cursor-pointer">
                         <div className="w-16 h-16 bg-gray-200 border-2 border-black overflow-hidden shrink-0">
-                          <img src={min.img || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'} className="w-full h-full object-cover grayscale group-hover:grayscale-0" alt="" />
+                          {/* IMAGE FIX: object-top */}
+                          <img src={min.img || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'} className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0" alt="" />
                         </div>
                         <div>
                           <h4 className="font-bold font-['Space_Grotesk'] text-lg leading-tight">{min.name}</h4>
@@ -249,105 +445,108 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
                     ))}
                   </div>
                 </div>
-              </div>
-            )}
+              )}
 
-            {/* --- TYPE: PROGRAM GALLERY --- */}
-            {type === 'program' && (
-              <div className="space-y-8">
-                <p className="text-lg md:text-xl font-['Inter'] max-w-3xl leading-relaxed border-l-4 border-[#F7941D] pl-4 bg-gray-50 p-4">{data.longDesc || data.desc}</p>
+              {/* 2. TAMPILAN UNTUK PROGRAM KERJA */}
+              {type === 'program' && (
+                <div className="space-y-8">
+                  <p className="text-lg font-['Inter'] border-l-4 border-[#F7941D] pl-4 bg-white p-4 leading-relaxed">{data.longDesc || data.desc}</p>
 
-                {/* Detailed Agenda */}
-                <div className="grid md:grid-cols-2 gap-8">
-                  <div className="border-2 border-black p-6 bg-[#f9f9f9]">
-                    <h3 className="font-black text-xl mb-4 flex items-center gap-2 uppercase">
-                      <Clock className="text-[#005696]" /> Rangkaian Kegiatan
+                  <div className="grid md:grid-cols-2 gap-8">
+                    <div className="border-2 border-black p-6 bg-[#f9f9f9]">
+                      <h3 className="font-black text-xl mb-4 flex items-center gap-2 uppercase">
+                        <Clock className="text-[#005696]" /> Rangkaian Kegiatan
+                      </h3>
+                      <ul className="space-y-3">
+                        {data.agenda && data.agenda.length > 0 ? (
+                          data.agenda.map((item, idx) => (
+                            <li key={idx} className="flex gap-3 text-sm">
+                              <span className="font-mono font-bold bg-black text-white px-2 py-0.5 h-fit">{item.time}</span>
+                              <span className="font-['Inter']">{item.activity}</span>
+                            </li>
+                          ))
+                        ) : (
+                          <li className="text-gray-500 italic">Jadwal detail akan segera dirilis.</li>
+                        )}
+                      </ul>
+                    </div>
+
+                    <div className="border-2 border-black p-6 bg-[#f9f9f9]">
+                      <h3 className="font-black text-xl mb-4 flex items-center gap-2 uppercase">
+                        <CheckCircle className="text-[#F7941D]" /> Output & Manfaat
+                      </h3>
+                      <ul className="space-y-2 list-disc pl-4 font-['Inter'] text-sm">{data.benefits && data.benefits.length > 0 ? data.benefits.map((ben, idx) => <li key={idx}>{ben}</li>) : <li>Meningkatkan soft skill mahasiswa.</li>}</ul>
+                    </div>
+                  </div>
+
+                  <div>
+                    <h3 className="text-2xl font-black mb-6 flex items-center gap-2 mt-8">
+                      <Camera className="text-[#F7941D]" /> DOKUMENTASI KEGIATAN
                     </h3>
-                    <ul className="space-y-3">
-                      {data.agenda && data.agenda.length > 0 ? (
-                        data.agenda.map((item, idx) => (
-                          <li key={idx} className="flex gap-3 text-sm">
-                            <span className="font-mono font-bold bg-black text-white px-2 py-0.5 h-fit">{item.time}</span>
-                            <span className="font-['Inter']">{item.activity}</span>
-                          </li>
-                        ))
-                      ) : (
-                        <li className="text-gray-500 italic">Jadwal detail akan segera dirilis.</li>
-                      )}
-                    </ul>
+                    <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
+                      {data.gallery?.map((img, idx) => (
+                        <div key={idx} className="break-inside-avoid relative group">
+                          <img src={img} alt="Gallery" className="w-full border-2 border-black grayscale hover:grayscale-0 transition-all duration-500" />
+                          <div className="absolute inset-0 bg-[#005696]/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none mix-blend-multiply"></div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
+                </div>
+              )}
 
-                  <div className="border-2 border-black p-6 bg-[#f9f9f9]">
-                    <h3 className="font-black text-xl mb-4 flex items-center gap-2 uppercase">
-                      <CheckCircle className="text-[#F7941D]" /> Output & Manfaat
-                    </h3>
-                    <ul className="space-y-2 list-disc pl-4 font-['Inter'] text-sm">{data.benefits && data.benefits.length > 0 ? data.benefits.map((ben, idx) => <li key={idx}>{ben}</li>) : <li>Meningkatkan soft skill mahasiswa.</li>}</ul>
+              {/* 3. TAMPILAN GALLERY MOMENT */}
+              {type === 'gallery' && (
+                <div className="space-y-6">
+                  <div className="relative border-4 border-black shadow-[8px_8px_0px_0px_#000] overflow-hidden">
+                    <img src={data.src} alt={data.title} className="w-full h-auto object-cover max-h-[60vh]" />
                   </div>
-                </div>
-
-                <div>
-                  <h3 className="text-2xl font-black mb-6 flex items-center gap-2 mt-8">
-                    <Camera className="text-[#F7941D]" /> DOKUMENTASI KEGIATAN
-                  </h3>
-                  <div className="columns-1 md:columns-2 lg:columns-3 gap-4 space-y-4">
-                    {data.gallery?.map((img, idx) => (
-                      <div key={idx} className="break-inside-avoid relative group">
-                        <img src={img} alt="Gallery" className="w-full border-2 border-black grayscale hover:grayscale-0 transition-all duration-500" />
-                        <div className="absolute inset-0 bg-[#005696]/20 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none mix-blend-multiply"></div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* --- TYPE: GALLERY MOMENT --- */}
-            {type === 'gallery' && (
-              <div className="space-y-6">
-                <div className="relative border-4 border-black shadow-[8px_8px_0px_0px_#000] overflow-hidden">
-                  <img src={data.src} alt={data.title} className="w-full h-auto object-cover max-h-[60vh]" />
-                </div>
-                <div className="bg-[#f0f0f0] p-6 border-l-8 border-[#F7941D]">
-                  <div className="flex items-center gap-2 mb-4">
-                    <MapPin className="text-[#005696]" />
-                    <span className="font-mono font-bold text-lg uppercase">{data.location}</span>
-                  </div>
-                  <p className="font-['Inter'] text-xl leading-relaxed">"{data.desc}"</p>
-                  <div className="mt-6 pt-4 border-t-2 border-gray-300 flex justify-end">
-                    <Heart className="text-red-500 fill-red-500" />
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {/* --- TYPE: STRUCTURAL LEADER & INDIVIDUAL MINISTER --- */}
-            {!data.coordinator && type !== 'program' && type !== 'gallery' && (
-              <div className="grid md:grid-cols-2 gap-8">
-                <div className="border-4 border-black p-2 bg-white rotate-1 shadow-[8px_8px_0px_0px_#000]">
-                  <img src={data.img || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167'} alt={data.name} className="w-full h-auto grayscale contrast-125 hover:grayscale-0 transition-all duration-500" />
-                </div>
-                <div className="font-['Inter'] space-y-6 flex flex-col justify-center">
                   <div className="bg-[#f0f0f0] p-6 border-l-8 border-[#F7941D]">
-                    <h4 className="font-bold font-['Space_Grotesk'] text-xl mb-2">Fokus Kinerja</h4>
-                    <p className="text-lg leading-relaxed">{data.focus || 'Mengawal visi strategis organisasi dan memastikan sinergitas antar elemen kabinet untuk mencapai tujuan bersama.'}</p>
-                  </div>
-
-                  {/* Fun Fact Section */}
-                  <div className="border-2 border-black border-dashed p-4 bg-yellow-50 relative">
-                    <Sparkles className="absolute -top-3 -right-3 text-[#005696] bg-white border border-black p-1 rounded-full" size={24} />
-                    <h4 className="font-bold font-mono text-sm uppercase text-gray-500 mb-1">Fun Fact</h4>
-                    <p className="font-bold text-lg italic">"{data.funFact || 'Suka tiba-tiba ngajak rapat dadakan.'}"</p>
-                  </div>
-
-                  {/* DYNAMIC SOCIAL MEDIA (INDIVIDUAL) */}
-                  <div className="pt-4 mt-4 border-t-4 border-black">
-                    <h4 className="font-bold mb-2 font-mono uppercase text-sm">Connect</h4>
-                    <SocialLinksRender socials={data.socials} />
+                    <div className="flex items-center gap-2 mb-4">
+                      <MapPin className="text-[#005696]" />
+                      <span className="font-mono font-bold text-lg uppercase">{data.location}</span>
+                    </div>
+                    <p className="font-['Inter'] text-xl leading-relaxed">"{data.desc}"</p>
+                    <div className="mt-6 pt-4 border-t-2 border-gray-300 flex justify-end">
+                      <Heart className="text-red-500 fill-red-500" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+
+              {/* 4. TAMPILAN LEADER / INDIVIDUAL / BPH INDIVIDUAL */}
+              {!data.coordinator && type !== 'program' && type !== 'gallery' && !isBphKampus && (
+                <div className="grid md:grid-cols-2 gap-8">
+                  <div className="border-4 border-black p-2 bg-white rotate-1 shadow-[8px_8px_0px_0px_#000]">
+                    {/* IMAGE FIX: object-cover object-top agar wajah tidak terpotong */}
+                    <img
+                      src={data.img || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167'}
+                      alt={data.name}
+                      className="w-full h-auto object-cover object-top grayscale contrast-125 hover:grayscale-0 transition-all duration-500"
+                    />
+                  </div>
+                  <div className="font-['Inter'] space-y-6 flex flex-col justify-center">
+                    <div className="bg-white p-6 border-l-8 border-[#F7941D]">
+                      <h4 className="font-bold font-['Space_Grotesk'] text-xl mb-2">Fokus Kinerja</h4>
+                      <p className="text-lg leading-relaxed">{data.focus || 'Mengawal visi strategis organisasi dan memastikan sinergitas antar elemen kabinet untuk mencapai tujuan bersama.'}</p>
+                    </div>
+
+                    {/* FUN FACT (Individual) */}
+                    <div className="border-2 border-black border-dashed p-4 bg-yellow-50 relative">
+                      <Sparkles className="absolute -top-3 -right-3 text-[#005696] bg-white border border-black p-1 rounded-full" size={24} />
+                      <h4 className="font-bold font-mono text-sm uppercase text-gray-500 mb-1">Fun Fact</h4>
+                      <p className="font-bold text-lg italic">"{data.funFact || 'Suka tiba-tiba ngajak rapat dadakan.'}"</p>
+                    </div>
+
+                    <div className="pt-4 mt-4 border-t-4 border-black">
+                      <h4 className="font-bold mb-2 font-mono uppercase text-sm">Connect</h4>
+                      <SocialLinksRender socials={data.socials} />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -596,12 +795,13 @@ const VisiMisi = () => {
   );
 };
 
-// --- Structure & Departments Combined Section ---
+// --- Structure & Departments Combined Section (Updated with Group Images) ---
 const StructureAndDepartments = ({ onMemberClick, onDeptClick }) => {
   return (
     <section id="structure" className="py-20 bg-white border-b-4 border-black">
       <div className="max-w-7xl mx-auto px-4">
         {/* -- PART 1: HIGH COUNCIL & COORDS -- */}
+        {/* (Bagian ini tetap menampilkan FOTO INDIVIDU karena ini adalah Pimpinan Tertinggi) */}
         <div className="text-center mb-24">
           <h2 className="font-['Space_Grotesk'] text-4xl md:text-6xl font-black mb-16 uppercase inline-block border-b-8 border-[#005696]">Struktur Kabinet</h2>
 
@@ -664,8 +864,8 @@ const StructureAndDepartments = ({ onMemberClick, onDeptClick }) => {
           </div>
         </div>
 
-        {/* -- PART 2: DEPARTMENTS -- */}
-        <div>
+        {/* -- PART 2: DEPARTMENTS (KEMENKO) -- */}
+        <div className="mb-24">
           <h2 className="font-['Space_Grotesk'] text-5xl md:text-7xl font-black mb-12 text-right leading-[0.8]">
             BIDANG
             <br />
@@ -686,8 +886,13 @@ const StructureAndDepartments = ({ onMemberClick, onDeptClick }) => {
                   <span className="font-mono text-2xl font-bold text-[#F7941D]">0{idx + 1}</span>
                 </div>
 
+                {/* IMAGE AREA: MENGGUNAKAN GROUP IMAGE */}
                 <div className="relative h-48 bg-gray-200 overflow-hidden border-b-4 border-black shrink-0">
-                  <img src={kemenko.coordinator.img} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt="" />
+                  <img
+                    src={kemenko.groupImg || kemenko.coordinator.img} // Logic ganti gambar di sini
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                    alt={kemenko.title}
+                  />
                   <div className="absolute bottom-0 left-0 bg-[#F7941D] text-black text-xs font-bold px-3 py-1 border-t-2 border-r-2 border-black">COORD: {kemenko.coordinator.name}</div>
                 </div>
 
@@ -708,13 +913,113 @@ const StructureAndDepartments = ({ onMemberClick, onDeptClick }) => {
             ))}
           </div>
         </div>
+
+        {/* -- PART 3: BPH KAMPUS (WILAYAH KERJA) -- */}
+        <div>
+          <h2 className="font-['Space_Grotesk'] text-5xl md:text-7xl font-black mb-12 text-left leading-[0.8]">
+            WILAYAH
+            <br />
+            <span className="text-stroke-2 text-transparent" style={{ WebkitTextStroke: '2px black' }}>
+              KERJA
+            </span>
+          </h2>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {siteData.bphKampus.map((item, idx) => (
+              <div key={idx} onClick={() => onMemberClick(item)} className="group bg-white border-4 border-black hover:shadow-[8px_8px_0px_0px_#F7941D] hover:-translate-y-2 transition-all duration-300 cursor-pointer flex flex-col">
+                <div className="bg-black text-white p-2 text-center border-b-4 border-black">
+                  <h4 className="font-['Space_Grotesk'] font-bold uppercase text-sm">{item.campus}</h4>
+                </div>
+
+                {/* IMAGE AREA: MENGGUNAKAN GROUP IMAGE */}
+                <div className="h-40 overflow-hidden relative bg-gray-100">
+                  <img
+                    src={item.groupImg || item.img} // Logic ganti gambar di sini
+                    alt={item.campus}
+                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
+                  />
+                </div>
+
+                <div className="p-4 text-center flex-1 flex flex-col justify-center">
+                  <h3 className="font-['Space_Grotesk'] font-bold text-lg leading-tight mb-1">{item.name}</h3>
+                  <p className="font-mono text-xs text-gray-500 uppercase">{item.role}</p>
+
+                  <div className="mt-3 pt-3 border-t-2 border-dashed border-gray-300 w-full flex justify-center">
+                    <span className="text-[10px] font-bold bg-[#005696] text-white px-2 py-0.5 rounded-full flex items-center gap-1">
+                      <User size={10} /> Lihat Struktur
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
 };
 
-// --- Program Kerja Section (Final Precision Fix) ---
+// --- Program Kerja Section (Conditional Epilog Logic) ---
 const ProgramKerja = ({ onProgramClick }) => {
+  // Helper: Menentukan Status berdasarkan Bulan & Tahun
+  const getItemStatus = (dateStr) => {
+    const months = {
+      Jan: 0,
+      Feb: 1,
+      Mar: 2,
+      Apr: 3,
+      Mei: 4,
+      Jun: 5,
+      Jul: 6,
+      Agt: 7,
+      Sep: 8,
+      Okt: 9,
+      Nov: 10,
+      Des: 11,
+    };
+
+    const parts = dateStr.split(' ');
+    const itemMonth = months[parts[0]];
+    const itemYear = parseInt(parts[1]);
+
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    if (itemYear < currentYear) return 'done';
+    if (itemYear > currentYear) return 'upcoming';
+
+    if (itemMonth < currentMonth) return 'done';
+    if (itemMonth === currentMonth) return 'ongoing';
+    return 'upcoming';
+  };
+
+  // LOGIC BARU: Cek apakah SEMUA item statusnya 'done'
+  const isAllDone = siteData.programs.timeline.every((item) => getItemStatus(item.month) === 'done');
+
+  // Komponen Badge Status
+  const StatusBadge = ({ status }) => {
+    if (status === 'done') {
+      return (
+        <span className="bg-[#25D366] text-black border-2 border-black px-2 py-0.5 text-[10px] font-mono font-bold uppercase flex items-center gap-1 w-fit">
+          <CheckCircle size={10} /> Sukses!
+        </span>
+      );
+    }
+    if (status === 'ongoing') {
+      return (
+        <span className="bg-[#F7941D] text-black border-2 border-black px-2 py-0.5 text-[10px] font-mono font-bold uppercase flex items-center gap-1 w-fit animate-pulse">
+          <Loader2 size={10} className="animate-spin" /> Sedang Berjalan
+        </span>
+      );
+    }
+    return (
+      <span className="bg-gray-200 text-gray-500 border-2 border-gray-400 border-dashed px-2 py-0.5 text-[10px] font-mono font-bold uppercase flex items-center gap-1 w-fit">
+        <Clock size={10} /> Mendatang...
+      </span>
+    );
+  };
+
   // Komponen Kecil untuk Kartu Program (Rutin/Tahunan)
   const ProgramCard = ({ prog, index }) => (
     <div onClick={() => onProgramClick(prog)} className="bg-[#1a1a1a] border-2 border-white p-6 hover:bg-white hover:text-black transition-all group relative overflow-hidden cursor-pointer h-full flex flex-col">
@@ -748,43 +1053,72 @@ const ProgramKerja = ({ onProgramClick }) => {
             <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 md:-ml-0.5 bg-white h-full z-0"></div>
 
             <div className="space-y-12">
-              {siteData.programs.timeline.map((item, i) => (
-                <div key={i} className={`relative flex flex-col md:flex-row items-center ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
-                  {/* Sisi Kosong untuk Desktop */}
-                  <div className="flex-1 w-full hidden md:block"></div>
+              {siteData.programs.timeline.map((item, i) => {
+                const status = getItemStatus(item.month);
 
-                  {/* Dot Marker di Garis */}
-                  {/* Z-index 20 agar menutupi sambungan garis */}
-                  <div className="absolute left-8 md:left-1/2 w-5 h-5 bg-[#F7941D] border-2 border-white rounded-full z-20 transform -translate-x-2 md:-translate-x-1/2 mt-6 md:mt-0 shadow-[0_0_10px_rgba(247,148,29,0.5)]"></div>
+                return (
+                  <div key={i} className={`relative flex flex-col md:flex-row items-center ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                    {/* Sisi Kosong untuk Desktop */}
+                    <div className="flex-1 w-full hidden md:block"></div>
 
-                  {/* Konten Kartu */}
-                  {/* HAPUS padding wrapper md:px-12, ganti dengan margin di kartu bawah */}
-                  <div className="flex-1 w-full pl-20 md:pl-0">
+                    {/* Dot Marker di Garis */}
                     <div
                       className={`
-                      bg-white text-black border-4 border-[#00A3E1] p-6 shadow-[8px_8px_0px_0px_#F7941D] 
-                      relative group hover:-translate-y-1 transition-transform duration-300 z-10
-                      /* Margin Presisi: Jarak 48px (mr-12/ml-12) dari tengah */
-                      ${i % 2 === 0 ? 'md:mr-12' : 'md:ml-12'}
+                      absolute left-8 md:left-1/2 w-5 h-5 border-2 border-white rounded-full z-20 transform -translate-x-2 md:-translate-x-1/2 mt-6 md:mt-0 shadow-[0_0_10px_rgba(255,255,255,0.5)]
+                      ${status === 'done' ? 'bg-[#25D366]' : status === 'ongoing' ? 'bg-[#F7941D]' : 'bg-gray-400'}
                     `}
-                    >
-                      {/* FIX: Connector Line Horizontal */}
-                      {/* w-14 (56px) - offset 14. Karena Margin 48px, overlapping 8px. Pas di tengah dot. */}
-                      <div className={`hidden md:block absolute top-1/2 -translate-y-1/2 h-1 w-14 bg-white z-0 ${i % 2 === 0 ? '-right-14' : '-left-14'}`}></div>
+                    ></div>
 
-                      <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
-                        <span className="bg-black text-white font-mono text-xs px-2 py-1 font-bold inline-block w-fit">{item.month}</span>
-                        <h3 className="font-['Space_Grotesk'] font-bold text-xl uppercase leading-none">{item.title}</h3>
+                    {/* Konten Kartu */}
+                    <div className="flex-1 w-full pl-20 md:pl-0">
+                      <div
+                        className={`
+                        bg-white text-black border-4 border-[#00A3E1] p-6 shadow-[8px_8px_0px_0px_#F7941D] 
+                        relative group hover:-translate-y-1 transition-transform duration-300 z-10
+                        ${i % 2 === 0 ? 'md:mr-12' : 'md:ml-12'}
+                        ${status === 'upcoming' ? 'opacity-80 grayscale hover:grayscale-0' : ''} 
+                      `}
+                      >
+                        {/* Connector Line Horizontal */}
+                        <div className={`hidden md:block absolute top-1/2 -translate-y-1/2 h-1 w-14 bg-white z-0 ${i % 2 === 0 ? '-right-14' : '-left-14'}`}></div>
+
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-2 mb-3 border-b-2 border-gray-100 pb-2">
+                          <div className="flex items-center gap-2">
+                            <span className="bg-black text-white font-mono text-xs px-2 py-1 font-bold inline-block w-fit">{item.month}</span>
+                          </div>
+                          <StatusBadge status={status} />
+                        </div>
+
+                        <h3 className="font-['Space_Grotesk'] font-bold text-xl uppercase leading-none mb-2">{item.title}</h3>
+                        <p className="font-['Inter'] text-sm text-gray-700">{item.desc}</p>
                       </div>
-                      <p className="font-['Inter'] text-sm text-gray-700 border-t-2 border-gray-200 pt-2 mt-2">{item.desc}</p>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
 
-            {/* End Marker */}
-            <div className="absolute left-8 md:left-1/2 bottom-0 w-8 h-1 bg-white transform -translate-x-3.5 md:-translate-x-1/2"></div>
+            {/* --- CONDITIONAL CLOSING SECTION (EPILOG) --- */}
+            {/* Hanya muncul jika variable isAllDone bernilai TRUE */}
+            {isAllDone && (
+              <div className="relative pt-16 flex justify-center animate-in fade-in duration-700">
+                {/* Dot Penutup */}
+                <div className="absolute left-8 md:left-1/2 top-16 w-8 h-8 bg-black border-4 border-white rounded-full z-20 transform -translate-x-3.5 md:-translate-x-1/2 flex items-center justify-center">
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                </div>
+
+                {/* Kotak Pesan Penutup */}
+                <div className="bg-[#1a1a1a] border-4 border-white p-6 text-center max-w-lg relative z-10 ml-16 md:ml-0 mt-8 md:mt-12">
+                  <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-[#F7941D] text-black font-bold font-mono px-3 py-1 text-xs border-2 border-white uppercase">Akhir Periode</div>
+                  <h3 className="font-['Space_Grotesk'] font-bold text-xl md:text-2xl mb-2">"Demikianlah Jejak Langkah Kami"</h3>
+                  <p className="font-['Inter'] text-gray-400 text-sm">Setiap program adalah cerita, dan setiap cerita adalah bukti pengabdian. Terima kasih telah menjadi saksi perjalanan Kabinet Integrasi Asa.</p>
+                  <Heart className="text-red-500 fill-red-500 mx-auto mt-4 animate-pulse" />
+                </div>
+              </div>
+            )}
+
+            {/* Marker akhir garis timeline (selalu muncul agar garis tidak putus menggantung) */}
+            {!isAllDone && <div className="absolute left-8 md:left-1/2 bottom-0 w-8 h-1 bg-white transform -translate-x-3.5 md:-translate-x-1/2"></div>}
           </div>
         </div>
 

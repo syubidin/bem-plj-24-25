@@ -1,5 +1,55 @@
 import { MapPin, Briefcase, Users, Award, Globe } from 'lucide-react';
 
+// Helper untuk struktur standar BPH (Template)
+const createStructure = (campusName) => ({
+  role: 'Ketua BPH',
+  name: 'Nama Ketua',
+  desc: 'Penanggung jawab utama organisasi dan pengambil keputusan strategis.',
+  children: [
+    {
+      role: 'Wakil Ketua',
+      name: 'Nama Wakil',
+      desc: 'Mendampingi ketua dan mengawasi kinerja setiap divisi.',
+      children: [
+        {
+          role: 'Sekretaris & Bendahara',
+          isGroup: true,
+          children: [
+            { role: 'Sekretaris I', name: 'Nama Sek 1', desc: 'Mengelola administrasi, notulensi, dan arsip surat.' },
+            { role: 'Sekretaris II', name: 'Nama Sek 2', desc: 'Mendukung administrasi dan jadwal rapat internal.' },
+            { role: 'Bendahara I', name: 'Nama Ben 1', desc: 'Mengelola keuangan dan laporan arus kas organisasi.' },
+            { role: 'Bendahara II', name: 'Nama Ben 2', desc: 'Membantu pencatatan transaksi dan bukti pembayaran.' },
+          ],
+        },
+        {
+          role: 'Divisi & Koor',
+          isGroup: true,
+          children: [
+            { role: 'Humas I', name: 'Nama Humas 1', desc: 'Mengelola hubungan eksternal dan publikasi.' },
+            { role: 'Humas II', name: 'Nama Humas 2', desc: 'Membantu pengelolaan pesan masuk dan relasi.' },
+            { role: 'Koor UKM I', name: 'Nama Koor 1', desc: 'Mengatur koordinasi antara UKM dan BPH.' },
+            { role: 'Koor UKM II', name: 'Nama Koor 2', desc: 'Mendata kehadiran dan laporan kegiatan UKM.' },
+            { role: 'PDD I', name: 'Nama PDD 1', desc: 'Mengkoordinasikan konsep visual dan desain.' },
+            { role: 'PDD II', name: 'Nama PDD 2', desc: 'Mendokumentasikan kegiatan dan arsip media.' },
+            { role: 'PSDM I', name: 'Nama PSDM 1', desc: 'Menyusun program pengembangan dan pelatihan anggota.' },
+            { role: 'PSDM II', name: 'Nama PSDM 2', desc: 'Mengelola database dan evaluasi SDM.' },
+          ],
+        },
+        {
+          role: 'Unit Kegiatan Mahasiswa',
+          isGroup: true,
+          children: [
+            { role: 'Ketua UKM 1', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM sesuai bidang.' },
+            { role: 'Ketua UKM 2', name: 'Nama Ketua', desc: 'Bertanggung jawab atas agenda UKM.' },
+            { role: 'Ketua UKM 3', name: 'Nama Ketua', desc: 'Melaporkan kegiatan ke Koor UKM.' },
+            { role: 'Ketua UKM 4', name: 'Nama Ketua', desc: 'Mengelola anggota UKM terkait.' },
+          ],
+        },
+      ],
+    },
+  ],
+});
+
 export const siteData = {
   hero: {
     titleSmall: 'POLITEKNIK LP3I JAKARTA',
@@ -64,7 +114,6 @@ export const siteData = {
         },
       ],
     },
-    // --- UPDATED SKI SECTION ---
     {
       role: 'Kepala SKI (Satuan Kontrol Internal)',
       name: 'Ari Masfufah',
@@ -73,7 +122,6 @@ export const siteData = {
       focus: 'Bertanggung jawab atas pengawasan kinerja fungsionaris, audit internal, serta penegakan kedisiplinan dan SOP organisasi (Check & Balance).',
       socials: { instagram: 'ari.masfufah', email: 'ari@ski.bem' },
     },
-    // ---------------------------
     {
       role: 'Koordinator Sekretariat',
       name: 'Cyntya Dwy Syamaryah',
@@ -86,9 +134,10 @@ export const siteData = {
   kemenkos: [
     {
       title: 'Kemenko Dalam Negeri',
+      groupImg: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=600', // NEW: Foto Group
       coordinator: {
         name: 'Irfansyah Akbar',
-        img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+        img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400', // Foto Personal
         funFact: 'Pernah nyasar di gedung sendiri.',
         focus: 'Mengoordinasikan pengembangan potensi internal mahasiswa serta menjaga stabilitas dinamika organisasi intra kampus.',
         socials: { instagram: 'irfansyah.akbar' },
@@ -103,20 +152,8 @@ export const siteData = {
           focus: 'Melakukan kaderisasi, upgrading skill pengurus, dan manajemen sumber daya manusia mahasiswa agar lebih kompeten.',
           socials: { instagram: 'intanaya' },
         },
-        {
-          name: 'Kementerian Agama',
-          minister: 'Vacant / TBA',
-          img: null,
-          funFact: 'Segera hadir.',
-          focus: 'Memfasilitasi kegiatan keagamaan lintas iman dan menjaga toleransi di lingkungan kampus.',
-        },
-        {
-          name: 'Kementerian Peng. Keilmuan',
-          minister: 'Vacant / TBA',
-          img: null,
-          funFact: 'Masih misterius.',
-          focus: 'Mengembangkan budaya literasi, riset, dan diskusi ilmiah untuk menunjang wawasan akademik mahasiswa.',
-        },
+        { name: 'Kementerian Agama', minister: 'Vacant / TBA', img: null, funFact: 'Segera hadir.', focus: 'Memfasilitasi kegiatan keagamaan lintas iman dan menjaga toleransi di lingkungan kampus.' },
+        { name: 'Kementerian Peng. Keilmuan', minister: 'Vacant / TBA', img: null, funFact: 'Masih misterius.', focus: 'Mengembangkan budaya literasi, riset, dan diskusi ilmiah untuk menunjang wawasan akademik mahasiswa.' },
         {
           name: 'Kementerian Seni Budaya',
           minister: 'Fitria Azahra Hata U',
@@ -125,17 +162,12 @@ export const siteData = {
           focus: 'Mewadahi minat bakat mahasiswa di bidang kesenian serta melestarikan budaya nusantara melalui pentas kreatif.',
           socials: { instagram: 'fitria.zahra' },
         },
-        {
-          name: 'Kementerian Olahraga',
-          minister: 'Vacant / TBA',
-          img: null,
-          funFact: 'Segera hadir.',
-          focus: 'Menyelenggarakan kompetisi olahraga dan memfasilitasi atlet kampus untuk berprestasi di tingkat regional maupun nasional.',
-        },
+        { name: 'Kementerian Olahraga', minister: 'Vacant / TBA', img: null, funFact: 'Segera hadir.', focus: 'Menyelenggarakan kompetisi olahraga dan memfasilitasi atlet kampus untuk berprestasi di tingkat regional maupun nasional.' },
       ],
     },
     {
       title: 'Kemenko Luar Negeri',
+      groupImg: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=600',
       coordinator: {
         name: 'Novela Widya Putri',
         img: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&q=80&w=400',
@@ -165,6 +197,7 @@ export const siteData = {
     },
     {
       title: 'Kemenko Informasi & Publikasi',
+      groupImg: 'https://images.unsplash.com/photo-1600880292203-757bb62b4baf?auto=format&fit=crop&q=80&w=600',
       coordinator: {
         name: 'Agung Afri Rinaldi',
         img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400',
@@ -202,6 +235,7 @@ export const siteData = {
     },
     {
       title: 'Kemenko Pembangunan Mhs',
+      groupImg: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=600',
       coordinator: {
         name: 'Bayu Malik Ibrahim',
         img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
@@ -231,6 +265,7 @@ export const siteData = {
     },
     {
       title: 'Kemenko Sosial & Politik',
+      groupImg: 'https://images.unsplash.com/photo-1577962917302-cd874c4e31d2?auto=format&fit=crop&q=80&w=600',
       coordinator: {
         name: 'Ahmad Rifaldi Haswan',
         img: 'https://images.unsplash.com/photo-1599566150163-29194dcaad36?auto=format&fit=crop&q=80&w=400',
@@ -248,14 +283,107 @@ export const siteData = {
           focus: 'Turun langsung ke masyarakat melalui program bina desa, bakti sosial, dan pemberdayaan komunitas marjinal.',
           socials: { instagram: 'darman.jb' },
         },
+        { name: 'Kementerian Kastrat', minister: 'Vacant / TBA', img: null, funFact: 'Data belum ditemukan.', focus: 'Mengkaji isu-isu politik nasional dan daerah serta merumuskan sikap organisasi yang kritis dan solutif.' },
+      ],
+    },
+  ],
+  bphKampus: [
+    {
+      ...createStructure('Kampus Jakarta Pusat'),
+      campus: 'Kampus Jakarta Pusat',
+      groupImg: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=600', // Foto Gedung/Group Kampus
+      img: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=400', // Foto Ketua
+    },
+    {
+      // DATA NYATA JAKARTA UTARA
+      campus: 'Kampus Jakarta Utara',
+      groupImg: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80&w=600',
+      img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
+      role: 'Ketua BPH',
+      name: 'Nama Ketua',
+      desc: 'Memimpin seluruh kegiatan, mengkoordinasikan divisi, dan menjadi penanggung jawab utama organisasi.',
+      children: [
         {
-          name: 'Kementerian Kastrat',
-          minister: 'Vacant / TBA',
-          img: null,
-          funFact: 'Data belum ditemukan.',
-          focus: 'Mengkaji isu-isu politik nasional dan daerah serta merumuskan sikap organisasi yang kritis dan solutif.',
+          role: 'Wakil Ketua BPH',
+          name: 'Nama Wakil',
+          desc: 'Mendampingi ketua, menggantikan saat berhalangan, dan mengawasi kinerja setiap divisi.',
+          children: [
+            {
+              role: 'Sekretariat & Kebendaharaan',
+              isGroup: true,
+              children: [
+                { role: 'Sekretaris I', name: 'Nama Sek 1', desc: 'Mengelola administrasi, notulensi rapat, dan arsip surat masuk/keluar.' },
+                { role: 'Sekretaris II', name: 'Nama Sek 2', desc: 'Mendukung sekretaris 1 dalam administrasi dan mengatur jadwal rapat.' },
+                { role: 'Bendahara I', name: 'Nama Ben 1', desc: 'Mengelola keuangan organisasi dan membuat laporan pemasukan/pengeluaran.' },
+                { role: 'Bendahara II', name: 'Nama Ben 2', desc: 'Membantu pencatatan transaksi dan mengurus pembayaran kegiatan.' },
+              ],
+            },
+            {
+              role: 'Divisi Fungsional',
+              isGroup: true,
+              children: [
+                { role: 'Humas I', name: 'Nama Humas 1', desc: 'Mengelola komunikasi, publikasi, dan hubungan dengan pihak eksternal.' },
+                { role: 'Humas II', name: 'Nama Humas 2', desc: 'Membantu publikasi dan mengelola pesan masuk (DM/Email).' },
+                { role: 'Koor UKM I', name: 'Nama Koor 1', desc: 'Mengatur alur koordinasi antara UKM dan BPH serta memantau perkembangan UKM.' },
+                { role: 'Koor UKM II', name: 'Nama Koor 2', desc: 'Membantu Koor UKM 1 dalam pendataan kehadiran dan laporan kegiatan.' },
+                { role: 'PDD I', name: 'Nama PDD 1', desc: 'Mengkoordinasikan desain publikasi dan membuat konsep visual kegiatan.' },
+                { role: 'PDD II', name: 'Nama PDD 2', desc: 'Membantu pembuatan konten visual dan mendokumentasikan kegiatan.' },
+                { role: 'PSDM I', name: 'Nama PSDM 1', desc: 'Menyusun program pengembangan anggota dan alur rekrutmen.' },
+                { role: 'PSDM II', name: 'Nama PSDM 2', desc: 'Mengelola database anggota dan menangani evaluasi SDM.' },
+              ],
+            },
+            {
+              role: 'Unit Kegiatan Mahasiswa (UKM)',
+              isGroup: true,
+              children: [
+                { role: 'Ketua UKM SEAL', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM SEAL dan bertanggung jawab atas agenda.' },
+                { role: 'Ketua UKM LMC', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM LMC dan bertanggung jawab atas agenda.' },
+                { role: 'Ketua UKM LAC', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM LAC dan bertanggung jawab atas agenda.' },
+                { role: 'Ketua UKM BSA', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM BSA dan bertanggung jawab atas agenda.' },
+                { role: 'Ketua UKM MSC', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM MSC dan bertanggung jawab atas agenda.' },
+                { role: 'Ketua UKM LSC', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM LSC dan bertanggung jawab atas agenda.' },
+                { role: 'Ketua UKM KAMIL', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM KAMIL dan bertanggung jawab atas agenda.' },
+              ],
+            },
+          ],
         },
       ],
+    },
+    {
+      ...createStructure('Kampus Pasar Minggu'),
+      campus: 'Kampus Pasar Minggu',
+      groupImg: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=600',
+      img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+    },
+    {
+      ...createStructure('Kampus Cikarang'),
+      campus: 'Kampus Cikarang',
+      groupImg: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&q=80&w=600',
+      img: 'https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&q=80&w=400',
+    },
+    {
+      ...createStructure('Kampus Depok'),
+      campus: 'Kampus Depok',
+      groupImg: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=600',
+      img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=400',
+    },
+    {
+      ...createStructure('Kampus Bekasi'),
+      campus: 'Kampus Bekasi',
+      groupImg: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=600',
+      img: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&q=80&w=400',
+    },
+    {
+      ...createStructure('Kampus Ciputat'),
+      campus: 'Kampus Ciputat',
+      groupImg: 'https://images.unsplash.com/photo-1510531704581-5b2870972060?auto=format&fit=crop&q=80&w=600',
+      img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400',
+    },
+    {
+      ...createStructure('Kampus Tangerang'),
+      campus: 'Kampus Tangerang',
+      groupImg: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?auto=format&fit=crop&q=80&w=600',
+      img: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=400',
     },
   ],
   programs: {
