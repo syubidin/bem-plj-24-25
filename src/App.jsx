@@ -175,35 +175,46 @@ const CustomCursor = () => {
   );
 };
 
-// --- 1. KOMPONEN KOTAK KECIL (NODE) - LEBIH RAPI ---
-const NodeBox = ({ role, name, color = 'blue', width = 'w-32 md:w-40' }) => {
-  const bgColors = {
-    orange: 'bg-[#F7941D]',
-    green: 'bg-[#22c55e]',
-    blue: 'bg-[#0000cd]',
+// --- 1. KOMPONEN KOTAK KECIL (NODE) - ID CARD STYLE ---
+const NodeBox = ({ role, name, img, color = 'blue' }) => {
+  // Warna Badge Jabatan
+  const badgeColors = {
+    orange: 'bg-[#F7941D] text-black',
+    green: 'bg-[#22c55e] text-white',
+    blue: 'bg-[#005696] text-white',
   };
 
+  // Placeholder image
+  const displayImg = img || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&q=80&w=200';
+
   return (
-    <div className={`relative z-20 flex flex-col items-center ${width} group`}>
-      <div
-        className={`
-        border-2 border-black shadow-[4px_4px_0px_0px_#000] 
-        text-center transition-transform hover:-translate-y-1 cursor-pointer w-full
-        ${bgColors[color] || 'bg-white'}
-      `}
-      >
-        <div className="py-1 px-1 border-b-2 border-black/20 bg-black/10">
-          <p className="text-[9px] font-bold text-white uppercase tracking-wider leading-tight">{role}</p>
+    <div className="relative z-20 flex flex-col items-center group transition-transform hover:-translate-y-1 duration-200 cursor-pointer">
+      {/* Kartu Utama */}
+      <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] p-2 w-32 md:w-36 flex flex-col items-center">
+        {/* Bingkai Foto (Persegi Presisi) */}
+        <div className="w-20 h-20 md:w-24 md:h-24 border-2 border-black mb-2 overflow-hidden bg-gray-100">
+          <img
+            src={displayImg}
+            alt={role}
+            className="w-full h-full object-cover object-top" // Memastikan wajah tidak terpotong & fit
+          />
         </div>
-        <div className="py-2 px-1 bg-white min-h-[40px] flex items-center justify-center">
+
+        {/* Nama */}
+        <div className="text-center mb-1">
           <p className="text-[10px] md:text-xs font-bold text-black leading-tight line-clamp-2">{name}</p>
+        </div>
+
+        {/* Badge Jabatan */}
+        <div className={`w-full py-1 px-1 border-2 border-black text-center ${badgeColors[color] || 'bg-black text-white'}`}>
+          <p className="text-[8px] font-black uppercase tracking-wider leading-none">{role}</p>
         </div>
       </div>
     </div>
   );
 };
 
-// --- 2. LAYOUT DIAGRAM KHUSUS (BPH CHART - FINAL PRECISION) ---
+// --- 2. LAYOUT DIAGRAM KHUSUS (BPH CHART - SIMPLE & CONNECTED) ---
 const BphChartLayout = ({ data }) => {
   if (!data) return null;
 
@@ -231,72 +242,76 @@ const BphChartLayout = ({ data }) => {
 
   return (
     <div className="flex flex-col items-center min-w-[1200px] pt-10 pb-24 px-10 font-['Space_Grotesk']">
-      {/* === LAYER 1: KETUA & TULANG PUNGGUNG UTAMA === */}
-      <div className="relative flex flex-col items-center z-20">
-        <NodeBox role="KETUA BPH" name={ketua.name} color="orange" />
-      </div>
+      {/* ============================================== */}
+      {/* LAYER 1: KETUA & TULANG PUNGGUNG (THE SPINE)   */}
+      {/* ============================================== */}
 
-      {/* GARIS TULANG PUNGGUNG (THE SPINE) */}
-      {/* Ini adalah satu garis panjang yang menyambungkan Ketua sampai Divisi */}
-      {/* Absolute terhadap container utama agar tidak terputus */}
-      <div className="relative w-full flex justify-center">
-        {/* Panjang garis diatur 26rem agar sampai ke palang Divisi */}
-        <div className="absolute -top-2 w-1 h-[26rem] bg-black z-0"></div>
+      <div className="relative flex flex-col items-center w-full">
+        {/* 1. KETUA */}
+        <div className="z-20 mb-0">
+          <NodeBox role="KETUA BPH" name={ketua.name} img={ketua.img} color="orange" />
+        </div>
 
-        {/* === LAYER 2: WAKIL KETUA (KIRI) === */}
-        {/* Margin top untuk memberi jarak dari Ketua */}
-        <div className="absolute top-12 right-[50%] pr-0 flex items-center z-20">
-          <NodeBox role="WAKIL KETUA" name={wakil?.name} color="orange" />
+        {/* GARIS UTAMA (SPINE) - Menyambung dari Ketua sampai Divisi */}
+        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-1 h-[34rem] bg-black z-0"></div>
 
-          {/* Konektor Wakil ke Spine */}
-          <div className="w-12 h-1 bg-black"></div>
-          {/* Panah Penunjuk */}
-          <div className="w-0 h-0 border-t-[6px] border-t-transparent border-b-[6px] border-b-transparent border-l-[8px] border-l-black -ml-0.5"></div>
+        {/* 2. WAKIL KETUA (Cabang Kiri) */}
+        <div className="absolute top-36 right-[50%] pr-0 flex items-center z-20">
+          <NodeBox role="WAKIL KETUA" name={wakil?.name} img={wakil?.img} color="orange" />
+          {/* Konektor Horizontal ke Spine */}
+          <div className="w-16 h-1 bg-black"></div>
+          {/* Titik Koneksi */}
+          <div className="w-3 h-3 bg-black rounded-full -ml-1.5"></div>
         </div>
       </div>
 
-      {/* === LAYER 3: SEKRETARIS & BENDAHARA === */}
-      {/* Margin top besar (mt-40) untuk memberi GAP dari Wakil Ketua */}
-      <div className="relative mt-40 w-[700px]">
-        {/* Palang Horizontal Sek-Ben */}
-        {/* Lebar fix 500px agar pas di tengah kotak Sek 1 dan Ben 1 */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-1 bg-black z-0"></div>
+      {/* ============================================== */}
+      {/* LAYER 3: SEKRETARIS & BENDAHARA                */}
+      {/* ============================================== */}
+
+      <div className="relative mt-32 w-[750px]">
+        {/* Garis Horizontal T (Menembus Spine) */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[550px] h-1 bg-black z-0"></div>
+        {/* Titik Koneksi Pusat */}
+        <div className="absolute top-[-0.25rem] left-1/2 -translate-x-1/2 w-3 h-3 bg-black rounded-full z-10"></div>
 
         <div className="flex justify-between px-[50px]">
-          {' '}
-          {/* Padding agar box pas di ujung garis */}
           {/* KIRI: SEKRETARIS */}
-          <div className="flex flex-col items-center gap-4 z-10">
-            {/* Konektor Kecil Turun */}
-            <div className="h-6 w-1 bg-black -mt-6"></div>
-            <NodeBox role={sek1?.role} name={sek1?.name} color="green" />
-            {/* Panah Turun ke Sek 2 */}
+          <div className="flex flex-col items-center gap-8 z-10 w-36">
+            <div className="h-8 w-1 bg-black -mt-8"></div> {/* Konektor Turun */}
+            <NodeBox role={sek1?.role} name={sek1?.name} img={sek1?.img} color="green" />
+            {/* Panah Lurus ke Sek 2 */}
             <div className="flex flex-col items-center -my-2">
-              <div className="h-4 w-1 bg-black"></div>
-              <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[8px] border-t-black"></div>
+              <div className="h-8 w-1 bg-black"></div>
+              <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-black"></div>
             </div>
-            <NodeBox role={sek2?.role} name={sek2?.name} color="green" />
+            <NodeBox role={sek2?.role} name={sek2?.name} img={sek2?.img} color="green" />
           </div>
+
           {/* KANAN: BENDAHARA */}
-          <div className="flex flex-col items-center gap-4 z-10">
-            {/* Konektor Kecil Turun */}
-            <div className="h-6 w-1 bg-black -mt-6"></div>
-            <NodeBox role={ben1?.role} name={ben1?.name} color="green" />
-            {/* Panah Turun ke Ben 2 */}
+          <div className="flex flex-col items-center gap-8 z-10 w-36">
+            <div className="h-8 w-1 bg-black -mt-8"></div> {/* Konektor Turun */}
+            <NodeBox role={ben1?.role} name={ben1?.name} img={ben1?.img} color="green" />
+            {/* Panah Lurus ke Ben 2 */}
             <div className="flex flex-col items-center -my-2">
-              <div className="h-4 w-1 bg-black"></div>
-              <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[8px] border-t-black"></div>
+              <div className="h-8 w-1 bg-black"></div>
+              <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-black"></div>
             </div>
-            <NodeBox role={ben2?.role} name={ben2?.name} color="green" />
+            <NodeBox role={ben2?.role} name={ben2?.name} img={ben2?.img} color="green" />
           </div>
         </div>
       </div>
 
-      {/* === LAYER 4: DIVISI (4 KOLOM) === */}
-      <div className="relative mt-16 w-[1000px]">
+      {/* ============================================== */}
+      {/* LAYER 4: DIVISI (4 KOLOM)                      */}
+      {/* ============================================== */}
+
+      <div className="relative mt-24 w-[1100px]">
         {/* Palang Horizontal Divisi */}
-        {/* Lebar 800px agar pas menampung 4 kolom tanpa sisa */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-1 bg-black z-0"></div>
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[860px] h-1 bg-black z-0"></div>
+
+        {/* Konektor dari Spine (Memastikan nyambung) */}
+        <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-1 h-12 bg-black z-0"></div>
 
         <div className="flex justify-center gap-12 pt-0">
           {[
@@ -307,23 +322,23 @@ const BphChartLayout = ({ data }) => {
           ].map((group, idx) => (
             <div key={idx} className="flex flex-col items-center relative w-40 z-10">
               {/* Konektor Turun dari Palang */}
-              <div className="h-8 w-1 bg-black -mt-8"></div>
+              <div className="h-8 w-1 bg-black -mt-0"></div>
 
-              <NodeBox role={group.r1?.role} name={group.r1?.name} color="blue" />
+              <NodeBox role={group.r1?.role} name={group.r1?.name} img={group.r1?.img} color="blue" />
 
               {/* Panah ke Bawah */}
               <div className="flex flex-col items-center -my-2 relative z-0">
-                <div className="h-4 w-1 bg-black"></div>
-                <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[8px] border-t-black"></div>
+                <div className="h-8 w-1 bg-black"></div>
+                <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-black"></div>
               </div>
 
-              <NodeBox role={group.r2?.role} name={group.r2?.name} color="blue" />
+              <NodeBox role={group.r2?.role} name={group.r2?.name} img={group.r2?.img} color="blue" />
 
-              {/* === JALUR KE UKM (Hanya dari KOOR UKM) === */}
+              {/* === JALUR KE UKM (LANGSUNG DARI KOOR UKM) === */}
               {group.isKoor && (
                 <div className="absolute top-[100%] left-1/2 -translate-x-1/2 flex flex-col items-center">
                   {/* Garis Turun Panjang ke Area UKM */}
-                  <div className="w-1 h-12 bg-black"></div>
+                  <div className="w-1 h-16 bg-black"></div>
                 </div>
               )}
             </div>
@@ -331,21 +346,23 @@ const BphChartLayout = ({ data }) => {
         </div>
       </div>
 
-      {/* === LAYER 5: UKM (CONNECTED) === */}
-      {/* Container ini margin-top nya pas agar menyambung dengan garis Koor di atas */}
-      <div className="relative mt-12 w-full max-w-[1300px]">
+      {/* ============================================== */}
+      {/* LAYER 5: UKM (CONNECTED)                       */}
+      {/* ============================================== */}
+
+      <div className="relative mt-16 w-full max-w-[1300px]">
         {/* Palang Horizontal UKM */}
-        {/* Width full container, border top */}
+        {/* Border top penuh + background transparent */}
         <div className="border-t-4 border-black w-full absolute top-0 left-0 z-0"></div>
 
         <div className="flex justify-between items-start pt-0">
           {groupUkm.map((ukm, idx) => (
             <div key={idx} className="flex flex-col items-center flex-1 relative z-10 px-2">
               {/* Konektor Turun ke Box UKM */}
-              <div className="h-6 w-1 bg-black"></div>
-              <div className="w-0 h-0 border-l-[5px] border-l-transparent border-r-[5px] border-r-transparent border-t-[8px] border-t-black -mt-1 mb-1"></div>
+              <div className="h-8 w-1 bg-black -mt-1"></div>
+              <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-black -mt-1 mb-2"></div>
 
-              <NodeBox role={ukm.role} name={ukm.name} color="blue" width="w-28" />
+              <NodeBox role={ukm.role} name={ukm.name} img={ukm.img} color="blue" width="w-32" />
             </div>
           ))}
         </div>
@@ -385,7 +402,7 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
               {/* Render Diagram */}
               <BphChartLayout data={data} />
 
-              <div className="p-4 text-center border-t-2 border-black bg-yellow-50 text-xs font-mono text-gray-500">*Geser ke samping untuk melihat seluruh struktur UKM</div>
+              <div className="p-4 text-center border-t-2 border-black bg-yellow-50 text-xs font-mono text-gray-500">*Scroll/Geser untuk melihat seluruh struktur UKM</div>
             </div>
           ) : (
             // --- MODE: REGULAR CONTENT ---
@@ -1186,40 +1203,54 @@ const Gallery = () => {
   return (
     <section className="py-20 border-b-4 border-black overflow-hidden bg-[#00A3E1]">
       <div className="rotate-2 scale-110">
-        <div className="flex animate-marquee gap-8 whitespace-nowrap mb-8">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="text-4xl md:text-8xl font-black text-black font-['Space_Grotesk'] uppercase flex items-center gap-8">
-              <span>Integrasi Asa</span>
-              <span className="text-white text-stroke-2" style={{ WebkitTextStroke: '2px black' }}>
-                Politeknik LP3I Jakarta
-              </span>
-            </div>
-          ))}
+        {/* --- BARIS 1 (Kiri) --- */}
+        <div className="flex overflow-hidden mb-8">
+          <div className="flex animate-marquee gap-8 whitespace-nowrap pr-8">
+            {/* Set Asli */}
+            {[...Array(6)].map((_, i) => (
+              <div key={`a-${i}`} className="text-4xl md:text-8xl font-black text-black font-['Space_Grotesk'] uppercase flex items-center gap-8">
+                <span>Integrasi Asa</span>
+                <span className="text-white text-stroke-2" style={{ WebkitTextStroke: '2px black' }}>
+                  Politeknik LP3I
+                </span>
+              </div>
+            ))}
+            {/* Set Duplikat (Supaya nyambung tak terbatas) */}
+            {[...Array(6)].map((_, i) => (
+              <div key={`b-${i}`} className="text-4xl md:text-8xl font-black text-black font-['Space_Grotesk'] uppercase flex items-center gap-8">
+                <span>Integrasi Asa</span>
+                <span className="text-white text-stroke-2" style={{ WebkitTextStroke: '2px black' }}>
+                  Politeknik LP3I
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
-        <div className="flex animate-marquee-reverse gap-8 whitespace-nowrap">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="text-4xl md:text-8xl font-black text-white font-['Space_Grotesk'] uppercase flex items-center gap-8">
-              <span>Berani Beda</span>
-              <span className="text-black text-stroke-2" style={{ WebkitTextStroke: '2px white' }}>
-                Nyata Karya
-              </span>
-            </div>
-          ))}
+
+        {/* --- BARIS 2 (Kanan/Reverse) --- */}
+        <div className="flex overflow-hidden">
+          <div className="flex animate-marquee-reverse gap-8 whitespace-nowrap pr-8">
+            {/* Set Asli */}
+            {[...Array(6)].map((_, i) => (
+              <div key={`c-${i}`} className="text-4xl md:text-8xl font-black text-white font-['Space_Grotesk'] uppercase flex items-center gap-8">
+                <span>Berani Beda</span>
+                <span className="text-black text-stroke-2" style={{ WebkitTextStroke: '2px white' }}>
+                  Nyata Karya
+                </span>
+              </div>
+            ))}
+            {/* Set Duplikat (Supaya nyambung tak terbatas) */}
+            {[...Array(6)].map((_, i) => (
+              <div key={`d-${i}`} className="text-4xl md:text-8xl font-black text-white font-['Space_Grotesk'] uppercase flex items-center gap-8">
+                <span>Berani Beda</span>
+                <span className="text-black text-stroke-2" style={{ WebkitTextStroke: '2px white' }}>
+                  Nyata Karya
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes marquee {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-50%); }
-        }
-        @keyframes marquee-reverse {
-          0% { transform: translateX(-50%); }
-          100% { transform: translateX(0); }
-        }
-        .animate-marquee { animation: marquee 20s linear infinite; }
-        .animate-marquee-reverse { animation: marquee-reverse 20s linear infinite; }
-      `}</style>
     </section>
   );
 };

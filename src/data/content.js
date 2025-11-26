@@ -1,48 +1,53 @@
 import { MapPin, Briefcase, Users, Award, Globe } from 'lucide-react';
 
-// Helper untuk struktur standar BPH (Template)
+// Helper Random Image untuk Placeholder (Supaya tidak bosan satu gambar saja)
+const getImg = (id) => `https://images.unsplash.com/photo-${id}?auto=format&fit=crop&q=80&w=200`;
+
+// Helper untuk struktur standar BPH (Template dengan Gambar Dinamis)
 const createStructure = (campusName) => ({
   role: 'Ketua BPH',
   name: 'Nama Ketua',
+  img: getImg('1500648767791-00dcc994a43e'),
   desc: 'Penanggung jawab utama organisasi dan pengambil keputusan strategis.',
   children: [
     {
       role: 'Wakil Ketua',
       name: 'Nama Wakil',
+      img: getImg('1507003211169-0a1dd7228f2d'),
       desc: 'Mendampingi ketua dan mengawasi kinerja setiap divisi.',
       children: [
         {
           role: 'Sekretaris & Bendahara',
           isGroup: true,
           children: [
-            { role: 'Sekretaris I', name: 'Nama Sek 1', desc: 'Mengelola administrasi, notulensi, dan arsip surat.' },
-            { role: 'Sekretaris II', name: 'Nama Sek 2', desc: 'Mendukung administrasi dan jadwal rapat internal.' },
-            { role: 'Bendahara I', name: 'Nama Ben 1', desc: 'Mengelola keuangan dan laporan arus kas organisasi.' },
-            { role: 'Bendahara II', name: 'Nama Ben 2', desc: 'Membantu pencatatan transaksi dan bukti pembayaran.' },
+            { role: 'Sekretaris I', name: 'Nama Sek 1', img: getImg('1494790108377-be9c29b29330'), desc: 'Mengelola administrasi.' },
+            { role: 'Sekretaris II', name: 'Nama Sek 2', img: getImg('1438761681033-6461ffad8d80'), desc: 'Jadwal & Arsip.' },
+            { role: 'Bendahara I', name: 'Nama Ben 1', img: getImg('1544005313-94ddf0286df2'), desc: 'Keuangan Utama.' },
+            { role: 'Bendahara II', name: 'Nama Ben 2', img: getImg('1552058544-f2b08422138a'), desc: 'Pembukuan Transaksi.' },
           ],
         },
         {
           role: 'Divisi & Koor',
           isGroup: true,
           children: [
-            { role: 'Humas I', name: 'Nama Humas 1', desc: 'Mengelola hubungan eksternal dan publikasi.' },
-            { role: 'Humas II', name: 'Nama Humas 2', desc: 'Membantu pengelolaan pesan masuk dan relasi.' },
-            { role: 'Koor UKM I', name: 'Nama Koor 1', desc: 'Mengatur koordinasi antara UKM dan BPH.' },
-            { role: 'Koor UKM II', name: 'Nama Koor 2', desc: 'Mendata kehadiran dan laporan kegiatan UKM.' },
-            { role: 'PDD I', name: 'Nama PDD 1', desc: 'Mengkoordinasikan konsep visual dan desain.' },
-            { role: 'PDD II', name: 'Nama PDD 2', desc: 'Mendokumentasikan kegiatan dan arsip media.' },
-            { role: 'PSDM I', name: 'Nama PSDM 1', desc: 'Menyusun program pengembangan dan pelatihan anggota.' },
-            { role: 'PSDM II', name: 'Nama PSDM 2', desc: 'Mengelola database dan evaluasi SDM.' },
+            { role: 'Humas I', name: 'Nama Humas 1', img: getImg('1534528741775-53994a69daeb'), desc: 'Relasi Eksternal.' },
+            { role: 'Humas II', name: 'Nama Humas 2', img: getImg('1517841905240-472988babdf9'), desc: 'Media Partner.' },
+            { role: 'Koor UKM I', name: 'Nama Koor 1', img: getImg('1539571696357-5a69c17a67c6'), desc: 'Koordinasi UKM.' },
+            { role: 'Koor UKM II', name: 'Nama Koor 2', img: getImg('1522529599102-193c0d76b5b6'), desc: 'Monitoring UKM.' },
+            { role: 'PDD I', name: 'Nama PDD 1', img: getImg('1531427186611-ecfd6d936c79'), desc: 'Desain Visual.' },
+            { role: 'PDD II', name: 'Nama PDD 2', img: getImg('1506794778202-cad84cf45f1d'), desc: 'Dokumentasi.' },
+            { role: 'PSDM I', name: 'Nama PSDM 1', img: getImg('1519085360753-af0119f7cbe7'), desc: 'Pengembangan SDM.' },
+            { role: 'PSDM II', name: 'Nama PSDM 2', img: getImg('1472099645785-5658abf4ff4e'), desc: 'Database Anggota.' },
           ],
         },
         {
           role: 'Unit Kegiatan Mahasiswa',
           isGroup: true,
           children: [
-            { role: 'Ketua UKM 1', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM sesuai bidang.' },
-            { role: 'Ketua UKM 2', name: 'Nama Ketua', desc: 'Bertanggung jawab atas agenda UKM.' },
-            { role: 'Ketua UKM 3', name: 'Nama Ketua', desc: 'Melaporkan kegiatan ke Koor UKM.' },
-            { role: 'Ketua UKM 4', name: 'Nama Ketua', desc: 'Mengelola anggota UKM terkait.' },
+            { role: 'Ketua UKM 1', name: 'Nama Ketua', img: getImg('1535713875002-d1d0cf377fde'), desc: 'Kegiatan UKM A.' },
+            { role: 'Ketua UKM 2', name: 'Nama Ketua', img: getImg('1521791136064-7986c2920216'), desc: 'Kegiatan UKM B.' },
+            { role: 'Ketua UKM 3', name: 'Nama Ketua', img: getImg('1500648767791-00dcc994a43e'), desc: 'Kegiatan UKM C.' },
+            { role: 'Ketua UKM 4', name: 'Nama Ketua', img: getImg('1562774053-701939374585'), desc: 'Kegiatan UKM D.' },
           ],
         },
       ],
@@ -134,10 +139,10 @@ export const siteData = {
   kemenkos: [
     {
       title: 'Kemenko Dalam Negeri',
-      groupImg: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=600', // NEW: Foto Group
+      groupImg: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&q=80&w=600',
       coordinator: {
         name: 'Irfansyah Akbar',
-        img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400', // Foto Personal
+        img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
         funFact: 'Pernah nyasar di gedung sendiri.',
         focus: 'Mengoordinasikan pengembangan potensi internal mahasiswa serta menjaga stabilitas dinamika organisasi intra kampus.',
         socials: { instagram: 'irfansyah.akbar' },
@@ -291,58 +296,58 @@ export const siteData = {
     {
       ...createStructure('Kampus Jakarta Pusat'),
       campus: 'Kampus Jakarta Pusat',
-      groupImg: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=600', // Foto Gedung/Group Kampus
-      img: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=400', // Foto Ketua
+      groupImg: 'https://images.unsplash.com/photo-1541339907198-e08756dedf3f?auto=format&fit=crop&q=80&w=600',
+      img: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&q=80&w=400',
+      role: 'Ketua BPH',
+      name: 'Syachrul',
     },
     {
-      // DATA NYATA JAKARTA UTARA
       campus: 'Kampus Jakarta Utara',
       groupImg: 'https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&q=80&w=600',
       img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
       role: 'Ketua BPH',
-      name: 'Nama Ketua',
-      desc: 'Memimpin seluruh kegiatan, mengkoordinasikan divisi, dan menjadi penanggung jawab utama organisasi.',
+      name: 'Annisa Oktaviani',
       children: [
         {
           role: 'Wakil Ketua BPH',
           name: 'Nama Wakil',
-          desc: 'Mendampingi ketua, menggantikan saat berhalangan, dan mengawasi kinerja setiap divisi.',
+          img: getImg('1511367461989-f85a21fda167'),
           children: [
             {
               role: 'Sekretariat & Kebendaharaan',
               isGroup: true,
               children: [
-                { role: 'Sekretaris I', name: 'Nama Sek 1', desc: 'Mengelola administrasi, notulensi rapat, dan arsip surat masuk/keluar.' },
-                { role: 'Sekretaris II', name: 'Nama Sek 2', desc: 'Mendukung sekretaris 1 dalam administrasi dan mengatur jadwal rapat.' },
-                { role: 'Bendahara I', name: 'Nama Ben 1', desc: 'Mengelola keuangan organisasi dan membuat laporan pemasukan/pengeluaran.' },
-                { role: 'Bendahara II', name: 'Nama Ben 2', desc: 'Membantu pencatatan transaksi dan mengurus pembayaran kegiatan.' },
+                { role: 'Sekretaris I', name: 'Nama Sek 1', img: getImg('1438761681033-6461ffad8d80'), desc: 'Administrasi & Surat.' },
+                { role: 'Sekretaris II', name: 'Nama Sek 2', img: getImg('1494790108377-be9c29b29330'), desc: 'Penjadwalan.' },
+                { role: 'Bendahara I', name: 'Nama Ben 1', img: getImg('1544005313-94ddf0286df2'), desc: 'Keuangan Pusat.' },
+                { role: 'Bendahara II', name: 'Nama Ben 2', img: getImg('1552058544-f2b08422138a'), desc: 'Transaksi Harian.' },
               ],
             },
             {
               role: 'Divisi Fungsional',
               isGroup: true,
               children: [
-                { role: 'Humas I', name: 'Nama Humas 1', desc: 'Mengelola komunikasi, publikasi, dan hubungan dengan pihak eksternal.' },
-                { role: 'Humas II', name: 'Nama Humas 2', desc: 'Membantu publikasi dan mengelola pesan masuk (DM/Email).' },
-                { role: 'Koor UKM I', name: 'Nama Koor 1', desc: 'Mengatur alur koordinasi antara UKM dan BPH serta memantau perkembangan UKM.' },
-                { role: 'Koor UKM II', name: 'Nama Koor 2', desc: 'Membantu Koor UKM 1 dalam pendataan kehadiran dan laporan kegiatan.' },
-                { role: 'PDD I', name: 'Nama PDD 1', desc: 'Mengkoordinasikan desain publikasi dan membuat konsep visual kegiatan.' },
-                { role: 'PDD II', name: 'Nama PDD 2', desc: 'Membantu pembuatan konten visual dan mendokumentasikan kegiatan.' },
-                { role: 'PSDM I', name: 'Nama PSDM 1', desc: 'Menyusun program pengembangan anggota dan alur rekrutmen.' },
-                { role: 'PSDM II', name: 'Nama PSDM 2', desc: 'Mengelola database anggota dan menangani evaluasi SDM.' },
+                { role: 'Humas I', name: 'Nama Humas 1', img: getImg('1534528741775-53994a69daeb'), desc: 'Hubungan Luar.' },
+                { role: 'Humas II', name: 'Nama Humas 2', img: getImg('1517841905240-472988babdf9'), desc: 'Media Sosial.' },
+                { role: 'Koor UKM I', name: 'Nama Koor 1', img: getImg('1539571696357-5a69c17a67c6'), desc: 'Supervisi UKM.' },
+                { role: 'Koor UKM II', name: 'Nama Koor 2', img: getImg('1522529599102-193c0d76b5b6'), desc: 'Laporan UKM.' },
+                { role: 'PDD I', name: 'Nama PDD 1', img: getImg('1531427186611-ecfd6d936c79'), desc: 'Creative Director.' },
+                { role: 'PDD II', name: 'Nama PDD 2', img: getImg('1506794778202-cad84cf45f1d'), desc: 'Fotografer.' },
+                { role: 'PSDM I', name: 'Nama PSDM 1', img: getImg('1519085360753-af0119f7cbe7'), desc: 'Training & Dev.' },
+                { role: 'PSDM II', name: 'Nama PSDM 2', img: getImg('1472099645785-5658abf4ff4e'), desc: 'Recruitment.' },
               ],
             },
             {
               role: 'Unit Kegiatan Mahasiswa (UKM)',
               isGroup: true,
               children: [
-                { role: 'Ketua UKM SEAL', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM SEAL dan bertanggung jawab atas agenda.' },
-                { role: 'Ketua UKM LMC', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM LMC dan bertanggung jawab atas agenda.' },
-                { role: 'Ketua UKM LAC', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM LAC dan bertanggung jawab atas agenda.' },
-                { role: 'Ketua UKM BSA', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM BSA dan bertanggung jawab atas agenda.' },
-                { role: 'Ketua UKM MSC', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM MSC dan bertanggung jawab atas agenda.' },
-                { role: 'Ketua UKM LSC', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM LSC dan bertanggung jawab atas agenda.' },
-                { role: 'Ketua UKM KAMIL', name: 'Nama Ketua', desc: 'Menjalankan kegiatan UKM KAMIL dan bertanggung jawab atas agenda.' },
+                { role: 'Ketua UKM SEAL', name: 'Nama Ketua', img: getImg('1535713875002-d1d0cf377fde'), desc: 'UKM Bahasa Inggris.' },
+                { role: 'Ketua UKM LMC', name: 'Nama Ketua', img: getImg('1521791136064-7986c2920216'), desc: 'UKM Musik.' },
+                { role: 'Ketua UKM LAC', name: 'Nama Ketua', img: getImg('1500648767791-00dcc994a43e'), desc: 'UKM Akuntansi.' },
+                { role: 'Ketua UKM BSA', name: 'Nama Ketua', img: getImg('1562774053-701939374585'), desc: 'UKM Administrasi.' },
+                { role: 'Ketua UKM MSC', name: 'Nama Ketua', img: getImg('1517841905240-472988babdf9'), desc: 'UKM Olahraga.' },
+                { role: 'Ketua UKM LSC', name: 'Nama Ketua', img: getImg('1506794778202-cad84cf45f1d'), desc: 'UKM Studi Islam.' },
+                { role: 'Ketua UKM KAMIL', name: 'Nama Ketua', img: getImg('1534528741775-53994a69daeb'), desc: 'UKM Komputer.' },
               ],
             },
           ],
@@ -354,30 +359,84 @@ export const siteData = {
       campus: 'Kampus Pasar Minggu',
       groupImg: 'https://images.unsplash.com/photo-1524178232363-1fb2b075b655?auto=format&fit=crop&q=80&w=600',
       img: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
+      role: 'Ketua BPH',
+      name: 'Silvia',
     },
     {
       ...createStructure('Kampus Cikarang'),
       campus: 'Kampus Cikarang',
       groupImg: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&q=80&w=600',
       img: 'https://images.unsplash.com/photo-1522529599102-193c0d76b5b6?auto=format&fit=crop&q=80&w=400',
+      role: 'Ketua BPH',
+      name: 'Naufal',
     },
     {
       ...createStructure('Kampus Depok'),
       campus: 'Kampus Depok',
       groupImg: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&q=80&w=600',
       img: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&q=80&w=400',
+      role: 'Ketua BPH',
+      name: 'Eka',
     },
     {
       ...createStructure('Kampus Bekasi'),
       campus: 'Kampus Bekasi',
       groupImg: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&q=80&w=600',
       img: 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&q=80&w=400',
+      role: 'Ketua BPH',
+      name: 'Syuby Alwi Akbar Attala',
+      children: [
+        {
+          role: 'Wakil Ketua BPH',
+          name: 'Chika Syifa Naila Rachmat',
+          img: getImg('1511367461989-f85a21fda167'),
+          children: [
+            {
+              role: 'Sekretariat & Kebendaharaan',
+              isGroup: true,
+              children: [
+                { role: 'Sekretaris I', name: 'Hani Luthfia Chasan', img: getImg('1438761681033-6461ffad8d80'), desc: 'Administrasi & Surat.' },
+                { role: 'Sekretaris II', name: 'Annisa Novilia Putri', img: getImg('1494790108377-be9c29b29330'), desc: 'Penjadwalan.' },
+                { role: 'Bendahara I', name: 'Sarah Amalia Putri', img: getImg('1544005313-94ddf0286df2'), desc: 'Keuangan Pusat.' },
+                { role: 'Bendahara II', name: 'Suci Rahmawati', img: getImg('1552058544-f2b08422138a'), desc: 'Transaksi Harian.' },
+              ],
+            },
+            {
+              role: 'Divisi Fungsional',
+              isGroup: true,
+              children: [
+                { role: 'Humas I', name: 'Fatimah Azzahra', img: getImg('1534528741775-53994a69daeb'), desc: 'Hubungan Luar.' },
+                { role: 'Humas II', name: 'Marco Luigi Pratama', img: getImg('1517841905240-472988babdf9'), desc: 'Media Sosial.' },
+                { role: 'Koor UKM I', name: 'Muhammad Zakky Almufra', img: getImg('1539571696357-5a69c17a67c6'), desc: 'Supervisi UKM.' },
+                { role: 'Koor UKM II', name: 'Refina Ar-Rizki', img: getImg('1522529599102-193c0d76b5b6'), desc: 'Laporan UKM.' },
+                { role: 'PDD I', name: 'Alisya Iskandar', img: getImg('1531427186611-ecfd6d936c79'), desc: 'Creative Director.' },
+                { role: 'PDD II', name: 'Muhammad Rafael', img: getImg('1506794778202-cad84cf45f1d'), desc: 'Fotografer.' },
+                { role: 'PSDM I', name: 'Nama PSDM 1', img: getImg('1519085360753-af0119f7cbe7'), desc: 'Training & Dev.' },
+                { role: 'PSDM II', name: 'Nama PSDM 2', img: getImg('1472099645785-5658abf4ff4e'), desc: 'Recruitment.' },
+              ],
+            },
+            {
+              role: 'Unit Kegiatan Mahasiswa (UKM)',
+              isGroup: true,
+              children: [
+                { role: 'Ketua UKM SEAL', name: 'Adinda Wulandari', img: getImg('1535713875002-d1d0cf377fde') },
+                { role: 'Ketua UKM LAC', name: 'Friska Olivia Sihaloho', img: getImg('1521791136064-7986c2920216') },
+                { role: 'Ketua UKM LCC', name: 'Rheza Rifalsya Hermawan', img: getImg('1500648767791-00dcc994a43e') },
+                { role: 'Ketua UKM LSA', name: 'Salsabila', img: getImg('1562774053-701939374585') },
+                { role: 'Ketua UKM LSE', name: 'Chaerul Gaizka Gibran', img: getImg('1517841905240-472988babdf9') },
+              ],
+            },
+          ],
+        },
+      ],
     },
     {
       ...createStructure('Kampus Ciputat'),
       campus: 'Kampus Ciputat',
       groupImg: 'https://images.unsplash.com/photo-1510531704581-5b2870972060?auto=format&fit=crop&q=80&w=600',
       img: 'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&q=80&w=400',
+      role: 'Ketua BPH',
+      name: 'Rakha Finanda',
     },
     {
       ...createStructure('Kampus Tangerang'),
