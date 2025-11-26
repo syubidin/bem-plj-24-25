@@ -28,10 +28,78 @@ import {
   Heart,
   Send,
   Loader2,
+  Linkedin,
+  Music,
+  Phone, // <--- Icon tambahan di sini
 } from 'lucide-react';
 
 // Import Data Lokal kita
 import { siteData } from './data/content';
+
+// --- Helper: Social Media Render Logic (UPDATED) ---
+const SocialLinksRender = ({ socials, align = 'start' }) => {
+  if (!socials) return null;
+
+  return (
+    <div className={`flex gap-3 justify-${align} flex-wrap`}>
+      {socials.instagram && (
+        <a href={`https://instagram.com/${socials.instagram}`} target="_blank" rel="noreferrer" className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#F7941D] transition-colors cursor-pointer bg-white group">
+          <Instagram size={20} className="group-hover:scale-110 transition-transform" />
+        </a>
+      )}
+      {socials.twitter && (
+        <a href={`https://twitter.com/${socials.twitter}`} target="_blank" rel="noreferrer" className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#00A3E1] transition-colors cursor-pointer bg-white group">
+          <Twitter size={20} className="group-hover:scale-110 transition-transform" />
+        </a>
+      )}
+      {socials.linkedin && (
+        <a
+          href={`https://linkedin.com/in/${socials.linkedin}`}
+          target="_blank"
+          rel="noreferrer"
+          className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#0077b5] hover:text-white transition-colors cursor-pointer bg-white group"
+        >
+          <Linkedin size={20} className="group-hover:scale-110 transition-transform" />
+        </a>
+      )}
+      {socials.tiktok && (
+        <a
+          href={`https://tiktok.com/@${socials.tiktok}`}
+          target="_blank"
+          rel="noreferrer"
+          className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-black hover:text-white transition-colors cursor-pointer bg-white group"
+        >
+          <Music size={20} className="group-hover:scale-110 transition-transform" />
+        </a>
+      )}
+      {socials.whatsapp && (
+        <a
+          href={`https://wa.me/${socials.whatsapp}`}
+          target="_blank"
+          rel="noreferrer"
+          className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#25D366] hover:text-white transition-colors cursor-pointer bg-white group"
+        >
+          <Phone size={20} className="group-hover:scale-110 transition-transform" />
+        </a>
+      )}
+      {socials.youtube && (
+        <a
+          href={`https://youtube.com/results?search_query=${socials.youtube}`}
+          target="_blank"
+          rel="noreferrer"
+          className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-red-600 hover:text-white transition-colors cursor-pointer bg-white group"
+        >
+          <Youtube size={20} className="group-hover:scale-110 transition-transform" />
+        </a>
+      )}
+      {socials.email && (
+        <a href={`mailto:${socials.email}`} className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#005696] hover:text-white transition-colors cursor-pointer bg-white group">
+          <Mail size={20} className="group-hover:scale-110 transition-transform" />
+        </a>
+      )}
+    </div>
+  );
+};
 
 // --- Helper: Smart Smooth Scroll ---
 const smoothScrollTo = (e, targetId) => {
@@ -152,20 +220,10 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
                       <p className="font-['Inter'] text-sm italic">"{data.coordinator.funFact || 'Suka begadang ngerjain proker.'}"</p>
                     </div>
 
-                    {/* Social Media for Coordinator */}
+                    {/* DYNAMIC SOCIAL MEDIA (COORDINATOR) */}
                     <div className="pt-4 mt-4 border-t-2 border-black border-dashed">
                       <h4 className="font-bold mb-2 font-mono uppercase text-xs text-gray-600">Connect</h4>
-                      <div className="flex gap-3">
-                        <div className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#F7941D] transition-colors cursor-pointer bg-white">
-                          <Instagram size={20} />
-                        </div>
-                        <div className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#00A3E1] transition-colors cursor-pointer bg-white">
-                          <Twitter size={20} />
-                        </div>
-                        <div className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#005696] hover:text-white transition-colors cursor-pointer bg-white">
-                          <Mail size={20} />
-                        </div>
-                      </div>
+                      <SocialLinksRender socials={data.coordinator.socials} />
                     </div>
                   </div>
                 </div>
@@ -194,12 +252,12 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
               </div>
             )}
 
-            {/* --- TYPE: PROGRAM GALLERY (Expanded) --- */}
+            {/* --- TYPE: PROGRAM GALLERY --- */}
             {type === 'program' && (
               <div className="space-y-8">
                 <p className="text-lg md:text-xl font-['Inter'] max-w-3xl leading-relaxed border-l-4 border-[#F7941D] pl-4 bg-gray-50 p-4">{data.longDesc || data.desc}</p>
 
-                {/* Detailed Agenda/Subsections */}
+                {/* Detailed Agenda */}
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="border-2 border-black p-6 bg-[#f9f9f9]">
                     <h3 className="font-black text-xl mb-4 flex items-center gap-2 uppercase">
@@ -243,7 +301,7 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
               </div>
             )}
 
-            {/* --- TYPE: GALLERY MOMENT (New) --- */}
+            {/* --- TYPE: GALLERY MOMENT --- */}
             {type === 'gallery' && (
               <div className="space-y-6">
                 <div className="relative border-4 border-black shadow-[8px_8px_0px_0px_#000] overflow-hidden">
@@ -281,19 +339,10 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
                     <p className="font-bold text-lg italic">"{data.funFact || 'Suka tiba-tiba ngajak rapat dadakan.'}"</p>
                   </div>
 
+                  {/* DYNAMIC SOCIAL MEDIA (INDIVIDUAL) */}
                   <div className="pt-4 mt-4 border-t-4 border-black">
                     <h4 className="font-bold mb-2 font-mono uppercase text-sm">Connect</h4>
-                    <div className="flex gap-4">
-                      <div className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#F7941D] transition-colors cursor-pointer">
-                        <Instagram size={20} />
-                      </div>
-                      <div className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#00A3E1] transition-colors cursor-pointer">
-                        <Twitter size={20} />
-                      </div>
-                      <div className="w-10 h-10 border-2 border-black flex items-center justify-center hover:bg-[#005696] hover:text-white transition-colors cursor-pointer">
-                        <Mail size={20} />
-                      </div>
-                    </div>
+                    <SocialLinksRender socials={data.socials} />
                   </div>
                 </div>
               </div>
@@ -305,7 +354,7 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
   );
 };
 
-// --- Navbar Component ---
+// --- Navbar Component (UPDATED LOGO) ---
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
@@ -348,11 +397,37 @@ const Navbar = () => {
       `}
     >
       <div className="max-w-7xl mx-auto px-4 flex justify-between items-center">
-        <div className="font-['Space_Grotesk'] font-bold text-lg md:text-2xl tracking-tighter flex items-center gap-2">
-          <div className={`w-8 h-8 border-2 border-current flex items-center justify-center ${isScrolled ? 'bg-white text-[#005696]' : 'bg-[#005696] text-white'}`}>
-            <span className="text-lg font-black">B</span>
+        {/* -- LOGO AREA UPDATE -- */}
+        <div className="flex items-center gap-4">
+          {/* Placeholder Logo 1 (BEM) */}
+          <div className="h-10 w-10 md:h-12 md:w-12 bg-white rounded-full border-2 border-current flex items-center justify-center overflow-hidden">
+            <img
+              src="/images/logo-bem.png"
+              alt="Logo BEM"
+              className="w-full h-full object-contain p-1"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.parentElement.innerHTML = '<span class="font-black text-xs">BEM</span>';
+              }}
+            />
           </div>
-          BEM PLJ 2024
+
+          <span className="hidden md:block text-xl font-thin opacity-50">|</span>
+
+          {/* Placeholder Logo 2 (LP3I) */}
+          <div className="h-10 w-10 md:h-12 md:w-12 bg-white rounded-full border-2 border-current flex items-center justify-center overflow-hidden">
+            <img
+              src="/images/logo-lp3i.png"
+              alt="Logo LP3I"
+              className="w-full h-full object-contain p-1"
+              onError={(e) => {
+                e.target.style.display = 'none';
+                e.target.parentElement.innerHTML = '<span class="font-black text-xs">LP3I</span>';
+              }}
+            />
+          </div>
+
+          <span className="font-['Space_Grotesk'] font-bold text-lg md:text-xl tracking-tighter ml-2">BEM PLJ 2024 - 2025</span>
         </div>
 
         <div className="hidden md:flex gap-8 font-bold font-['Space_Grotesk']">
@@ -493,7 +568,7 @@ const VisiMisi = () => {
 
   return (
     <section className="py-20 bg-[#F7941D] border-b-4 border-black relative overflow-hidden">
-      <div className="absolute top-0 right-0 p-4 font-black text-6xl md:text-9xl opacity-10 pointer-events-none select-none">VISION</div>
+      <div className="absolute top-0 right-0 p-4 font-black text-6xl md:text-9xl opacity-10 pointer-events-none select-none">MISI</div>
 
       <div className="max-w-7xl mx-auto px-4">
         <div className="flex flex-col md:flex-row gap-8">
@@ -638,8 +713,9 @@ const StructureAndDepartments = ({ onMemberClick, onDeptClick }) => {
   );
 };
 
-// --- Program Kerja Section ---
+// --- Program Kerja Section (Final Precision Fix) ---
 const ProgramKerja = ({ onProgramClick }) => {
+  // Komponen Kecil untuk Kartu Program (Rutin/Tahunan)
   const ProgramCard = ({ prog, index }) => (
     <div onClick={() => onProgramClick(prog)} className="bg-[#1a1a1a] border-2 border-white p-6 hover:bg-white hover:text-black transition-all group relative overflow-hidden cursor-pointer h-full flex flex-col">
       <div className="absolute top-0 right-0 p-4 opacity-10 font-black text-6xl group-hover:opacity-5 transition-opacity">0{index + 1}</div>
@@ -659,33 +735,87 @@ const ProgramKerja = ({ onProgramClick }) => {
   );
 
   return (
-    <section id="programs" className="py-20 bg-[#1a1a1a] text-white border-b-4 border-white">
+    <section id="programs" className="py-20 bg-[#1a1a1a] text-white border-b-4 border-white relative">
       <div className="max-w-7xl mx-auto px-4">
-        <h2 className="font-['Space_Grotesk'] text-5xl md:text-6xl font-black mb-16 uppercase text-center">
-          <span className="text-[#F7941D]">Program</span> Unggulan
-        </h2>
+        {/* --- NEW SECTION: TIMELINE PROGRAM --- */}
+        <div className="mb-32">
+          <h2 className="font-['Space_Grotesk'] text-5xl md:text-6xl font-black mb-16 uppercase text-center">
+            <span className="text-[#F7941D]">Timeline</span> Kegiatan
+          </h2>
 
-        {/* Category: TAHUNAN */}
-        <div className="mb-16">
-          <h3 className="font-['Space_Grotesk'] text-3xl font-bold mb-8 flex items-center gap-3 border-b-2 border-white pb-2">
-            <Star className="text-[#F7941D]" /> PROGRAM TAHUNAN (Annual)
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {siteData.programs.tahunan.map((prog, i) => (
-              <ProgramCard key={i} prog={prog} index={i} />
-            ))}
+          <div className="relative">
+            {/* Garis Vertikal Tengah (Desktop) / Kiri (Mobile) */}
+            <div className="absolute left-8 md:left-1/2 top-0 bottom-0 w-1 md:-ml-0.5 bg-white h-full z-0"></div>
+
+            <div className="space-y-12">
+              {siteData.programs.timeline.map((item, i) => (
+                <div key={i} className={`relative flex flex-col md:flex-row items-center ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                  {/* Sisi Kosong untuk Desktop */}
+                  <div className="flex-1 w-full hidden md:block"></div>
+
+                  {/* Dot Marker di Garis */}
+                  {/* Z-index 20 agar menutupi sambungan garis */}
+                  <div className="absolute left-8 md:left-1/2 w-5 h-5 bg-[#F7941D] border-2 border-white rounded-full z-20 transform -translate-x-2 md:-translate-x-1/2 mt-6 md:mt-0 shadow-[0_0_10px_rgba(247,148,29,0.5)]"></div>
+
+                  {/* Konten Kartu */}
+                  {/* HAPUS padding wrapper md:px-12, ganti dengan margin di kartu bawah */}
+                  <div className="flex-1 w-full pl-20 md:pl-0">
+                    <div
+                      className={`
+                      bg-white text-black border-4 border-[#00A3E1] p-6 shadow-[8px_8px_0px_0px_#F7941D] 
+                      relative group hover:-translate-y-1 transition-transform duration-300 z-10
+                      /* Margin Presisi: Jarak 48px (mr-12/ml-12) dari tengah */
+                      ${i % 2 === 0 ? 'md:mr-12' : 'md:ml-12'}
+                    `}
+                    >
+                      {/* FIX: Connector Line Horizontal */}
+                      {/* w-14 (56px) - offset 14. Karena Margin 48px, overlapping 8px. Pas di tengah dot. */}
+                      <div className={`hidden md:block absolute top-1/2 -translate-y-1/2 h-1 w-14 bg-white z-0 ${i % 2 === 0 ? '-right-14' : '-left-14'}`}></div>
+
+                      <div className="flex flex-col md:flex-row md:items-center gap-2 mb-2">
+                        <span className="bg-black text-white font-mono text-xs px-2 py-1 font-bold inline-block w-fit">{item.month}</span>
+                        <h3 className="font-['Space_Grotesk'] font-bold text-xl uppercase leading-none">{item.title}</h3>
+                      </div>
+                      <p className="font-['Inter'] text-sm text-gray-700 border-t-2 border-gray-200 pt-2 mt-2">{item.desc}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* End Marker */}
+            <div className="absolute left-8 md:left-1/2 bottom-0 w-8 h-1 bg-white transform -translate-x-3.5 md:-translate-x-1/2"></div>
           </div>
         </div>
 
-        {/* Category: RUTIN */}
+        {/* --- EXISTING SECTION: PROGRAM UNGGULAN --- */}
         <div>
-          <h3 className="font-['Space_Grotesk'] text-3xl font-bold mb-8 flex items-center gap-3 border-b-2 border-white pb-2">
-            <Repeat className="text-[#00A3E1]" /> PROGRAM RUTIN (Routine)
-          </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {siteData.programs.rutin.map((prog, i) => (
-              <ProgramCard key={i} prog={prog} index={i} />
-            ))}
+          <h2 className="font-['Space_Grotesk'] text-5xl md:text-6xl font-black mb-16 uppercase text-center">
+            <span className="text-[#00A3E1]">Program</span> Unggulan
+          </h2>
+
+          {/* Category: TAHUNAN */}
+          <div className="mb-16">
+            <h3 className="font-['Space_Grotesk'] text-3xl font-bold mb-8 flex items-center gap-3 border-b-2 border-white pb-2">
+              <Star className="text-[#F7941D]" /> PROGRAM TAHUNAN (Annual)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {siteData.programs.tahunan.map((prog, i) => (
+                <ProgramCard key={i} prog={prog} index={i} />
+              ))}
+            </div>
+          </div>
+
+          {/* Category: RUTIN */}
+          <div>
+            <h3 className="font-['Space_Grotesk'] text-3xl font-bold mb-8 flex items-center gap-3 border-b-2 border-white pb-2">
+              <Repeat className="text-[#00A3E1]" /> PROGRAM RUTIN (Routine)
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {siteData.programs.rutin.map((prog, i) => (
+                <ProgramCard key={i} prog={prog} index={i} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -727,7 +857,7 @@ const Gallery = () => {
             <div key={i} className="text-4xl md:text-8xl font-black text-black font-['Space_Grotesk'] uppercase flex items-center gap-8">
               <span>Integrasi Asa</span>
               <span className="text-white text-stroke-2" style={{ WebkitTextStroke: '2px black' }}>
-                Politeknik LP3I
+                Politeknik LP3I Jakarta
               </span>
             </div>
           ))}
@@ -801,7 +931,7 @@ const Footer = () => {
     <footer id="contact" className="bg-[#1a1a1a] text-white pt-20 pb-10">
       <div className="max-w-7xl mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 border-b-2 border-gray-700 pb-12 mb-12">
-          {/* Contact Form Section - Replaces the old Button */}
+          {/* Contact Form Section */}
           <div className="bg-white p-6 border-4 border-[#00A3E1] shadow-[8px_8px_0px_0px_#F7941D] text-black">
             <h2 className="font-['Space_Grotesk'] text-3xl font-black mb-4 uppercase">Kirim Pesan</h2>
 
@@ -850,6 +980,7 @@ const Footer = () => {
             )}
           </div>
 
+          {/* Contact Info & Footer Socials */}
           <div className="space-y-6 font-['Inter'] flex flex-col justify-center">
             <h2 className="font-['Space_Grotesk'] text-4xl md:text-5xl font-black mb-2">
               SIAP
@@ -858,26 +989,17 @@ const Footer = () => {
             </h2>
             <div className="flex items-start gap-4">
               <MapPin className="text-[#00A3E1] shrink-0 mt-1" />
-              <p>
-                Politeknik LP3I Jakarta
-                <br />
-                Gedung Sentra Kramat, Jl. Kramat Raya No. 7-9, Jakarta Pusat
-              </p>
+              <p className="whitespace-pre-line">{siteData.footer.address}</p>
             </div>
             <div className="flex items-center gap-4">
               <Globe className="text-[#00A3E1]" />
-              <p>bem.lp3i.ac.id</p>
+              <p>{siteData.footer.website}</p>
             </div>
 
+            {/* DYNAMIC FOOTER SOCIALS */}
             <div className="pt-8">
               <h3 className="font-bold text-gray-400 mb-4 uppercase tracking-widest">Social Media</h3>
-              <div className="flex gap-4">
-                {[Instagram, Twitter, Youtube].map((Icon, i) => (
-                  <a key={i} href="#" className="w-12 h-12 border-2 border-gray-600 flex items-center justify-center hover:bg-[#005696] hover:border-[#005696] hover:-translate-y-1 transition-all">
-                    <Icon size={24} />
-                  </a>
-                ))}
-              </div>
+              <SocialLinksRender socials={siteData.footer.socials} />
             </div>
           </div>
         </div>
@@ -885,7 +1007,7 @@ const Footer = () => {
         <div className="flex flex-col md:flex-row justify-between items-center text-gray-500 font-mono text-sm">
           <p className="text-center md:text-left">&copy; 2024 BEM Politeknik LP3I Jakarta. Kabinet Integrasi Asa.</p>
           <p className="mt-2 md:mt-0">
-            Built with <span className="text-[#F7941D]">Neo-Brutalism</span> Style
+            Powered By <span className="text-[#F7941D]">Syuby-Dev.</span>
           </p>
         </div>
       </div>
