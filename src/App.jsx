@@ -773,7 +773,21 @@ const Footer = () => {
     const data = Object.fromEntries(formData.entries());
 
     try {
-      // Example integration: fetch('https://formspree.io/f/YOUR_FORM_ID', { method: 'POST', body: formData })
+      fetch('https://formspree.io/f/manzzqzv', {
+        // Ganti link ini
+        method: 'POST',
+        body: formData,
+        headers: {
+          Accept: 'application/json',
+        },
+      }).then((response) => {
+        if (response.ok) {
+          setFormStatus('success');
+          e.target.reset();
+        } else {
+          setFormStatus('error');
+        }
+      });
       await new Promise((resolve) => setTimeout(resolve, 2000)); // Fake delay
       console.log('Form Submitted:', data);
       setFormStatus('success');
