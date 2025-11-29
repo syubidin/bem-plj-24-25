@@ -175,207 +175,168 @@ const CustomCursor = () => {
   );
 };
 
-// --- 1. KOMPONEN KOTAK KECIL (NODE) - ID CARD STYLE ---
-const NodeBox = ({ role, name, img, color = 'blue' }) => {
-  // Warna Badge Jabatan
-  const badgeColors = {
-    orange: 'bg-[#F7941D] text-black',
-    green: 'bg-[#22c55e] text-white',
-    blue: 'bg-[#005696] text-white',
-  };
-
-  // Placeholder image
+// --- 1. NEW COMPONENT: CARD MODULAR (Gaya Dashboard) ---
+const ModularCard = ({ role, name, img, variant = 'default' }) => {
   const displayImg = img || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&q=80&w=200';
 
-  return (
-    <div className="relative z-20 flex flex-col items-center group transition-transform hover:-translate-y-1 duration-200 cursor-pointer">
-      {/* Kartu Utama */}
-      <div className="bg-white border-2 border-black shadow-[4px_4px_0px_0px_#000] p-2 w-32 md:w-36 flex flex-col items-center">
-        {/* Bingkai Foto (Persegi Presisi) */}
-        <div className="w-20 h-20 md:w-24 md:h-24 border-2 border-black mb-2 overflow-hidden bg-gray-100">
-          <img
-            src={displayImg}
-            alt={role}
-            className="w-full h-full object-cover object-top" // Memastikan wajah tidak terpotong & fit
-          />
-        </div>
+  // Variant Styles
+  const styles = {
+    leader: 'border-4 border-black bg-[#F7941D] text-black', // Ketua
+    admin: 'border-2 border-black bg-white', // Sek/Ben
+    dept: 'border-2 border-black bg-[#f0f0f0] hover:bg-[#00A3E1] hover:text-white transition-colors', // Divisi
+    unit: 'border-2 border-black bg-black text-white', // UKM
+  };
 
-        {/* Nama */}
-        <div className="text-center mb-1">
-          <p className="text-[10px] md:text-xs font-bold text-black leading-tight line-clamp-2">{name}</p>
+  if (variant === 'leader') {
+    return (
+      <div className={`relative p-4 flex items-center gap-4 ${styles.leader} shadow-[8px_8px_0px_0px_#000]`}>
+        <div className="w-24 h-24 border-2 border-black bg-gray-200 shrink-0 overflow-hidden">
+          <img src={displayImg} alt={role} className="w-full h-full object-cover object-top" />
         </div>
-
-        {/* Badge Jabatan */}
-        <div className={`w-full py-1 px-1 border-2 border-black text-center ${badgeColors[color] || 'bg-black text-white'}`}>
-          <p className="text-[8px] font-black uppercase tracking-wider leading-none">{role}</p>
+        <div>
+          <div className="bg-black text-white text-xs font-bold px-2 py-1 inline-block mb-1">{role}</div>
+          <h3 className="font-['Space_Grotesk'] text-xl font-bold leading-tight">{name}</h3>
         </div>
       </div>
+    );
+  }
+
+  if (variant === 'unit') {
+    return (
+      <div className={`flex items-center gap-3 p-2 ${styles.unit} hover:translate-x-1 transition-transform`}>
+        <div className="w-10 h-10 border border-white shrink-0 overflow-hidden">
+          <img src={displayImg} alt={role} className="w-full h-full object-cover object-top" />
+        </div>
+        <div>
+          <p className="text-[10px] font-mono text-gray-400 uppercase leading-none mb-0.5">{role}</p>
+          <p className="text-xs font-bold leading-none">{name}</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Default (Admin & Dept)
+  return (
+    <div className={`p-3 flex flex-col ${styles[variant] || styles.admin} h-full`}>
+      <div className="flex justify-between items-start mb-2">
+        <span className="text-[10px] font-black uppercase border-b-2 border-current pb-0.5">{role}</span>
+        <div className="w-8 h-8 border-2 border-current overflow-hidden rounded-full">
+          <img src={displayImg} alt={role} className="w-full h-full object-cover object-top" />
+        </div>
+      </div>
+      <p className="font-bold text-sm leading-tight mt-auto">{name}</p>
     </div>
   );
 };
 
-// --- 2. LAYOUT DIAGRAM KHUSUS (BPH CHART - SIMPLE & CONNECTED) ---
-const BphChartLayout = ({ data }) => {
+// --- 2. LAYOUT MODULAR DASHBOARD (SMART DYNAMIC FIX) ---
+const BphModularLayout = ({ data }) => {
   if (!data) return null;
 
-  // Extraction Data
-  const ketua = data;
-  const wakil = data.children?.[0];
+  // --- THE HARVESTER LOGIC (FIXED) ---
+  const harvestMembers = (node, buckets) => {
+    const role = node.role.toLowerCase();
 
-  const groupSekBen = wakil?.children?.[0]?.children || [];
-  const sek1 = groupSekBen[0];
-  const sek2 = groupSekBen[1];
-  const ben1 = groupSekBen[2];
-  const ben2 = groupSekBen[3];
+    // PERBAIKAN: Cek dulu apakah ini Group Wrapper?
+    // Jika isGroup = true, jangan dimasukkan ke bucket (tapi anak-anaknya tetap dicek di bawah)
+    if (!node.isGroup) {
+      if (role.includes('ketua bph') || role.includes('wakil ketua')) {
+        buckets.leaders.push(node);
+      } else if (role.includes('sekretaris') || role.includes('bendahara')) {
+        buckets.admins.push(node);
+      } else if (role.includes('ketua ukm') || role.includes('wakil ukm')) {
+        buckets.units.push(node);
+      } else {
+        // Sisanya masuk Divisi (Humas, Koor, PDD, PSDM, dll)
+        buckets.divisions.push(node);
+      }
+    }
 
-  const groupDivisi = wakil?.children?.[1]?.children || [];
-  const humas1 = groupDivisi[0];
-  const humas2 = groupDivisi[1];
-  const koor1 = groupDivisi[2];
-  const koor2 = groupDivisi[3];
-  const pdd1 = groupDivisi[4];
-  const pdd2 = groupDivisi[5];
-  const psdm1 = groupDivisi[6];
-  const psdm2 = groupDivisi[7];
+    // Rekursif: Cari lagi ke anak-anaknya
+    if (node.children && node.children.length > 0) {
+      node.children.forEach((child) => harvestMembers(child, buckets));
+    }
+  };
 
-  const groupUkm = wakil?.children?.[2]?.children || [];
+  // Inisialisasi Keranjang
+  const buckets = {
+    leaders: [],
+    admins: [],
+    divisions: [],
+    units: [],
+  };
+
+  // Mulai Memanen dari Root
+  harvestMembers(data, buckets);
 
   return (
-    <div className="flex flex-col items-center min-w-[1200px] pt-10 pb-24 px-10 font-['Space_Grotesk']">
-      {/* ============================================== */}
-      {/* LAYER 1: KETUA & TULANG PUNGGUNG (THE SPINE)   */}
-      {/* ============================================== */}
-
-      <div className="relative flex flex-col items-center w-full">
-        {/* 1. KETUA */}
-        <div className="z-20 mb-0">
-          <NodeBox role="KETUA BPH" name={ketua.name} img={ketua.img} color="orange" />
-        </div>
-
-        {/* GARIS UTAMA (SPINE) - Menyambung dari Ketua sampai Divisi */}
-        <div className="absolute top-20 left-1/2 -translate-x-1/2 w-1 h-[34rem] bg-black z-0"></div>
-
-        {/* 2. WAKIL KETUA (Cabang Kiri) */}
-        <div className="absolute top-36 right-[50%] pr-0 flex items-center z-20">
-          <NodeBox role="WAKIL KETUA" name={wakil?.name} img={wakil?.img} color="orange" />
-          {/* Konektor Horizontal ke Spine */}
-          <div className="w-16 h-1 bg-black"></div>
-          {/* Titik Koneksi */}
-          <div className="w-3 h-3 bg-black rounded-full -ml-1.5"></div>
-        </div>
+    <div className="flex flex-col gap-10 min-w-full font-['Space_Grotesk'] p-2">
+      {/* SECTION 1: THE HEAD (Leaders) */}
+      <div className={`grid gap-6 ${buckets.leaders.length > 1 ? 'grid-cols-1 md:grid-cols-2' : 'grid-cols-1'}`}>
+        {buckets.leaders.map((item, idx) => (
+          <div key={idx} className={item.role.toLowerCase().includes('ketua bph') ? 'md:col-span-2 lg:col-span-1 lg:col-start-1' : ''}>
+            <ModularCard role={item.role} name={item.name} img={item.img} variant="leader" />
+          </div>
+        ))}
       </div>
 
-      {/* ============================================== */}
-      {/* LAYER 3: SEKRETARIS & BENDAHARA                */}
-      {/* ============================================== */}
+      <hr className="border-t-4 border-black border-dashed opacity-50" />
 
-      <div className="relative mt-32 w-[750px]">
-        {/* Garis Horizontal T (Menembus Spine) */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[550px] h-1 bg-black z-0"></div>
-        {/* Titik Koneksi Pusat */}
-        <div className="absolute top-[-0.25rem] left-1/2 -translate-x-1/2 w-3 h-3 bg-black rounded-full z-10"></div>
-
-        <div className="flex justify-between px-[50px]">
-          {/* KIRI: SEKRETARIS */}
-          <div className="flex flex-col items-center gap-8 z-10 w-36">
-            <div className="h-8 w-1 bg-black -mt-8"></div> {/* Konektor Turun */}
-            <NodeBox role={sek1?.role} name={sek1?.name} img={sek1?.img} color="green" />
-            {/* Panah Lurus ke Sek 2 */}
-            <div className="flex flex-col items-center -my-2">
-              <div className="h-8 w-1 bg-black"></div>
-              <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-black"></div>
-            </div>
-            <NodeBox role={sek2?.role} name={sek2?.name} img={sek2?.img} color="green" />
-          </div>
-
-          {/* KANAN: BENDAHARA */}
-          <div className="flex flex-col items-center gap-8 z-10 w-36">
-            <div className="h-8 w-1 bg-black -mt-8"></div> {/* Konektor Turun */}
-            <NodeBox role={ben1?.role} name={ben1?.name} img={ben1?.img} color="green" />
-            {/* Panah Lurus ke Ben 2 */}
-            <div className="flex flex-col items-center -my-2">
-              <div className="h-8 w-1 bg-black"></div>
-              <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-black"></div>
-            </div>
-            <NodeBox role={ben2?.role} name={ben2?.name} img={ben2?.img} color="green" />
+      {/* SECTION 2: CORE OPERATIONS (Sekretaris & Bendahara) */}
+      {buckets.admins.length > 0 && (
+        <div>
+          <h4 className="font-black text-xl mb-4 flex items-center gap-2">
+            <span className="bg-black text-white px-2 py-1 text-sm">CORE</span> ADMIN & FINANCE
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {buckets.admins.map((item, idx) => (
+              <ModularCard key={idx} role={item.role} name={item.name} img={item.img} variant="admin" />
+            ))}
           </div>
         </div>
-      </div>
+      )}
 
-      {/* ============================================== */}
-      {/* LAYER 4: DIVISI (4 KOLOM)                      */}
-      {/* ============================================== */}
-
-      <div className="relative mt-24 w-[1100px]">
-        {/* Palang Horizontal Divisi */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[860px] h-1 bg-black z-0"></div>
-
-        {/* Konektor dari Spine (Memastikan nyambung) */}
-        <div className="absolute -top-12 left-1/2 -translate-x-1/2 w-1 h-12 bg-black z-0"></div>
-
-        <div className="flex justify-center gap-12 pt-0">
-          {[
-            { r1: humas1, r2: humas2 },
-            { r1: koor1, r2: koor2, isKoor: true },
-            { r1: pdd1, r2: pdd2 },
-            { r1: psdm1, r2: psdm2 },
-          ].map((group, idx) => (
-            <div key={idx} className="flex flex-col items-center relative w-40 z-10">
-              {/* Konektor Turun dari Palang */}
-              <div className="h-8 w-1 bg-black -mt-0"></div>
-
-              <NodeBox role={group.r1?.role} name={group.r1?.name} img={group.r1?.img} color="blue" />
-
-              {/* Panah ke Bawah */}
-              <div className="flex flex-col items-center -my-2 relative z-0">
-                <div className="h-8 w-1 bg-black"></div>
-                <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-black"></div>
-              </div>
-
-              <NodeBox role={group.r2?.role} name={group.r2?.name} img={group.r2?.img} color="blue" />
-
-              {/* === JALUR KE UKM (LANGSUNG DARI KOOR UKM) === */}
-              {group.isKoor && (
-                <div className="absolute top-[100%] left-1/2 -translate-x-1/2 flex flex-col items-center">
-                  {/* Garis Turun Panjang ke Area UKM */}
-                  <div className="w-1 h-16 bg-black"></div>
+      {/* SECTION 3: FUNCTIONAL DIVISIONS */}
+      {buckets.divisions.length > 0 && (
+        <div className="bg-gray-100 p-6 border-4 border-black shadow-[8px_8px_0px_0px_#005696]">
+          <h4 className="font-black text-xl mb-6 flex items-center gap-2">
+            <span className="bg-[#005696] text-white px-2 py-1 text-sm">DEPT</span> FUNCTIONAL DIVISIONS
+          </h4>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-4 gap-y-8">
+            {buckets.divisions.map((item, idx) => (
+              <div key={idx} className="relative group">
+                <div className="absolute inset-0 bg-black translate-x-1.5 translate-y-1.5 group-hover:translate-x-2 group-hover:translate-y-2 transition-transform"></div>
+                <div className="relative h-full">
+                  <ModularCard role={item.role} name={item.name} img={item.img} variant="dept" />
                 </div>
-              )}
-            </div>
-          ))}
+              </div>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* ============================================== */}
-      {/* LAYER 5: UKM (CONNECTED)                       */}
-      {/* ============================================== */}
-
-      <div className="relative mt-16 w-full max-w-[1300px]">
-        {/* Palang Horizontal UKM */}
-        {/* Border top penuh + background transparent */}
-        <div className="border-t-4 border-black w-full absolute top-0 left-0 z-0"></div>
-
-        <div className="flex justify-between items-start pt-0">
-          {groupUkm.map((ukm, idx) => (
-            <div key={idx} className="flex flex-col items-center flex-1 relative z-10 px-2">
-              {/* Konektor Turun ke Box UKM */}
-              <div className="h-8 w-1 bg-black -mt-1"></div>
-              <div className="w-0 h-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-t-[8px] border-t-black -mt-1 mb-2"></div>
-
-              <NodeBox role={ukm.role} name={ukm.name} img={ukm.img} color="blue" width="w-32" />
-            </div>
-          ))}
+      {/* SECTION 4: UNITS (UKM) */}
+      {buckets.units.length > 0 && (
+        <div>
+          <h4 className="font-black text-xl mb-4 flex items-center gap-2">
+            <span className="bg-[#F7941D] text-black px-2 py-1 text-sm border border-black">UNIT</span> AFFILIATED UNITS
+          </h4>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {buckets.units.map((item, idx) => (
+              <ModularCard key={idx} role={item.role} name={item.name} img={item.img} variant="unit" />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };
 
-// --- MODAL UTAMA (UPDATED: Fun Facts & Image Fix) ---
+// --- MODAL UTAMA (FINAL: Fun Facts Everywhere & Image Fit) ---
 const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
   if (!isOpen || !data) return null;
 
-  // Cek apakah ini data BPH Kampus (untuk mode diagram)
+  // Cek apakah ini data BPH Kampus
   const isBphKampus = data.campus !== undefined;
 
   return (
@@ -396,24 +357,39 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
 
         {/* Scrollable Content */}
         <div className="overflow-y-auto overflow-x-hidden flex-1 p-6 bg-[#f0f0f0]">
-          {/* --- MODE: BPH KAMPUS STRUCTURE (FULL CHART) --- */}
+          {/* --- MODE 1: BPH KAMPUS STRUCTURE (FULL CHART) --- */}
           {isBphKampus ? (
-            <div className="overflow-x-auto border-2 border-black bg-white bg-[url('https://www.transparenttextures.com/patterns/graphy.png')]">
-              {/* Render Diagram */}
-              <BphChartLayout data={data} />
+            <div className="space-y-8">
+              {/* INFO & FUN FACT (Added for BPH) */}
+              <div className="bg-white border-2 border-black p-6 flex flex-col md:flex-row gap-6 items-start">
+                <div className="flex-1">
+                  <h3 className="font-bold text-xl mb-2 font-['Space_Grotesk']">Deskripsi Wilayah</h3>
+                  <p className="font-['Inter'] text-sm md:text-base leading-relaxed mb-4">{data.focus || data.desc}</p>
+                  <div className="border-2 border-black border-dashed p-3 bg-yellow-50 relative inline-block">
+                    <Sparkles className="absolute -top-3 -right-3 text-[#005696] bg-white border border-black p-1 rounded-full" size={20} />
+                    <h4 className="font-bold font-mono text-xs uppercase text-gray-500 mb-1">Fun Fact</h4>
+                    <p className="font-bold text-sm italic">"{data.funFact}"</p>
+                  </div>
+                </div>
+                <div className="shrink-0">
+                  <SocialLinksRender socials={data.socials} />
+                </div>
+              </div>
 
-              <div className="p-4 text-center border-t-2 border-black bg-yellow-50 text-xs font-mono text-gray-500">*Scroll/Geser untuk melihat seluruh struktur UKM</div>
+              {/* DASHBOARD LAYOUT BARU */}
+              <div className="bg-white p-4">
+                <BphModularLayout data={data} />
+              </div>
             </div>
           ) : (
-            // --- MODE: REGULAR CONTENT ---
+            // --- MODE 2: REGULAR CONTENT ---
             <div className="max-w-5xl mx-auto">
-              {/* 1. TAMPILAN UNTUK KEMENKO (COORDINATOR) */}
+              {/* A. TAMPILAN UNTUK KEMENKO (COORDINATOR) */}
               {data.coordinator && (
                 <div className="space-y-12">
-                  {/* Coordinator Section */}
                   <div className="flex flex-col md:flex-row gap-8 items-start bg-[#f0f0f0] p-6 border-2 border-black">
                     <div className="relative shrink-0 w-full md:w-auto text-center md:text-left">
-                      {/* IMAGE FIX: object-cover object-top */}
+                      {/* IMAGE FIX: object-top */}
                       <img
                         src={data.coordinator.img || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&q=80&w=400'}
                         alt={data.coordinator.name}
@@ -434,7 +410,6 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
                         <p className="font-['Inter'] text-sm italic">"{data.coordinator.funFact || 'Suka begadang ngerjain proker.'}"</p>
                       </div>
 
-                      {/* Social Media */}
                       <div className="pt-4 mt-2 border-t-2 border-black border-dashed">
                         <h4 className="font-bold mb-2 font-mono uppercase text-xs text-gray-600">Connect</h4>
                         <SocialLinksRender socials={data.coordinator.socials} />
@@ -447,7 +422,6 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
                     {data.ministries?.map((min, idx) => (
                       <div key={idx} onClick={() => onSwitchData(min)} className="border-2 border-black p-4 hover:bg-black hover:text-white transition-colors group flex items-center gap-4 cursor-pointer">
                         <div className="w-16 h-16 bg-gray-200 border-2 border-black overflow-hidden shrink-0">
-                          {/* IMAGE FIX: object-top */}
                           <img src={min.img || 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&q=80&w=200'} className="w-full h-full object-cover object-top grayscale group-hover:grayscale-0" alt="" />
                         </div>
                         <div>
@@ -464,11 +438,10 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
                 </div>
               )}
 
-              {/* 2. TAMPILAN UNTUK PROGRAM KERJA */}
+              {/* B. TAMPILAN UNTUK PROGRAM KERJA */}
               {type === 'program' && (
                 <div className="space-y-8">
                   <p className="text-lg font-['Inter'] border-l-4 border-[#F7941D] pl-4 bg-white p-4 leading-relaxed">{data.longDesc || data.desc}</p>
-
                   <div className="grid md:grid-cols-2 gap-8">
                     <div className="border-2 border-black p-6 bg-[#f9f9f9]">
                       <h3 className="font-black text-xl mb-4 flex items-center gap-2 uppercase">
@@ -487,7 +460,6 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
                         )}
                       </ul>
                     </div>
-
                     <div className="border-2 border-black p-6 bg-[#f9f9f9]">
                       <h3 className="font-black text-xl mb-4 flex items-center gap-2 uppercase">
                         <CheckCircle className="text-[#F7941D]" /> Output & Manfaat
@@ -495,7 +467,6 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
                       <ul className="space-y-2 list-disc pl-4 font-['Inter'] text-sm">{data.benefits && data.benefits.length > 0 ? data.benefits.map((ben, idx) => <li key={idx}>{ben}</li>) : <li>Meningkatkan soft skill mahasiswa.</li>}</ul>
                     </div>
                   </div>
-
                   <div>
                     <h3 className="text-2xl font-black mb-6 flex items-center gap-2 mt-8">
                       <Camera className="text-[#F7941D]" /> DOKUMENTASI KEGIATAN
@@ -512,7 +483,7 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
                 </div>
               )}
 
-              {/* 3. TAMPILAN GALLERY MOMENT */}
+              {/* C. TAMPILAN GALLERY MOMENT */}
               {type === 'gallery' && (
                 <div className="space-y-6">
                   <div className="relative border-4 border-black shadow-[8px_8px_0px_0px_#000] overflow-hidden">
@@ -531,11 +502,11 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
                 </div>
               )}
 
-              {/* 4. TAMPILAN LEADER / INDIVIDUAL / BPH INDIVIDUAL */}
+              {/* D. TAMPILAN LEADER / INDIVIDUAL (Default) */}
               {!data.coordinator && type !== 'program' && type !== 'gallery' && !isBphKampus && (
                 <div className="grid md:grid-cols-2 gap-8">
                   <div className="border-4 border-black p-2 bg-white rotate-1 shadow-[8px_8px_0px_0px_#000]">
-                    {/* IMAGE FIX: object-cover object-top agar wajah tidak terpotong */}
+                    {/* IMAGE FIX: object-top */}
                     <img
                       src={data.img || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167'}
                       alt={data.name}
@@ -569,7 +540,6 @@ const DetailModal = ({ isOpen, onClose, data, type, onSwitchData }) => {
     </div>
   );
 };
-
 // --- Navbar Component (UPDATED LOGO) ---
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -737,12 +707,7 @@ const About = () => {
           <div className="relative group order-2 md:order-1">
             <div className="absolute inset-0 bg-black translate-x-4 translate-y-4 border-2 border-white transition-transform group-hover:translate-x-2 group-hover:translate-y-2"></div>
             <div className="relative border-4 border-black bg-[#00A3E1] h-[300px] md:h-[400px] flex items-center justify-center overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1523580494863-6f3031224c94?q=80&w=2070&auto=format&fit=crop"
-                alt="Students"
-                className="object-cover w-full h-full grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500"
-              />
-              <div className="absolute inset-0 bg-black/20 bg-[url('https://www.transparenttextures.com/patterns/diagmonds-light.png')] pointer-events-none"></div>
+              <img src="/images/integrasi-asa.jpeg" alt="Students" className="object-cover w-full h-full grayscale contrast-125 group-hover:grayscale-0 transition-all duration-500" />
             </div>
           </div>
 
@@ -755,7 +720,7 @@ const About = () => {
             <div className="space-y-6 font-['Inter'] text-base md:text-lg">
               <p className="bg-black/20 p-4 border-l-4 border-white backdrop-blur-sm">"Integrasi Asa" melambangkan penyatuan berbagai harapan dan potensi mahasiswa Politeknik LP3I Jakarta menjadi satu kekuatan pendorong perubahan.</p>
               <p>
-                Kami mengusung semangat <strong className="bg-[#F7941D] text-black px-1">Contemporary Brutalism</strong> dalam estetika sebagai simbol ketegasan, transparansi, dan fundamental yang kokoh dalam berorganisasi.
+                Kami mengusung semangat <strong className="bg-[#F7941D] text-black px-1">Brutalistic</strong> dalam estetika sebagai simbol ketegasan, transparansi, dan fundamental yang kokoh dalam berorganisasi.
               </p>
 
               <div className="grid grid-cols-3 gap-2 md:gap-4 mt-8">
@@ -812,31 +777,34 @@ const VisiMisi = () => {
   );
 };
 
-// --- Structure & Departments Combined Section (Updated with Group Images) ---
+// --- Structure & Departments Combined Section (Clean Cards - No Fun Fact) ---
 const StructureAndDepartments = ({ onMemberClick, onDeptClick }) => {
   return (
     <section id="structure" className="py-20 bg-white border-b-4 border-black">
       <div className="max-w-7xl mx-auto px-4">
         {/* -- PART 1: HIGH COUNCIL & COORDS -- */}
-        {/* (Bagian ini tetap menampilkan FOTO INDIVIDU karena ini adalah Pimpinan Tertinggi) */}
         <div className="text-center mb-24">
           <h2 className="font-['Space_Grotesk'] text-4xl md:text-6xl font-black mb-16 uppercase inline-block border-b-8 border-[#005696]">Struktur Kabinet</h2>
 
+          {/* LEADERS (Presiden & Wapres) */}
           <div className="flex flex-col md:flex-row justify-center gap-8 mb-12 relative">
             <div className="hidden md:block absolute top-1/2 left-[20%] right-[20%] h-1 bg-black -z-10"></div>
             {siteData.leaders.map((leader, idx) => (
               <div key={idx} onClick={() => onMemberClick(leader)} className="relative group w-full md:w-96 cursor-pointer mx-auto">
                 <div className="bg-[#f0f0f0] border-4 border-black p-4 md:p-6 transition-all duration-300 group-hover:-translate-y-2 shadow-[8px_8px_0px_0px_#000]">
                   <div className="w-full h-64 md:h-72 border-2 border-black mb-4 overflow-hidden relative">
-                    <img src={leader.img} alt={leader.name} className="w-full h-full object-cover filter grayscale group-hover:grayscale-0 transition-all" />
+                    <img src={leader.img} alt={leader.name} className="w-full h-full object-cover object-top filter grayscale group-hover:grayscale-0 transition-all duration-500" />
                   </div>
                   <h3 className="font-['Space_Grotesk'] font-black text-xl md:text-2xl uppercase leading-tight">{leader.name}</h3>
                   <p className="font-mono text-xs md:text-sm bg-[#F7941D] text-black inline-block px-2 py-1 mt-2 border border-black font-bold">{leader.role}</p>
+
+                  {/* REMOVED: Inline Fun Fact */}
                 </div>
               </div>
             ))}
           </div>
 
+          {/* COORDINATORS & BIRO */}
           <div className="max-w-6xl mx-auto mb-12 relative">
             <div className="hidden md:block absolute -top-12 left-1/2 w-1 h-12 bg-black -z-10"></div>
             <div className="hidden md:block absolute top-0 left-[16%] right-[16%] h-1 bg-black -z-10"></div>
@@ -844,16 +812,20 @@ const StructureAndDepartments = ({ onMemberClick, onDeptClick }) => {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-start">
               {siteData.coordinators.map((coord, idx) => (
                 <div key={idx} className="flex flex-col items-center relative">
+                  {/* Coordinator Card */}
                   <div onClick={() => onMemberClick(coord)} className="bg-white border-4 border-black p-4 hover:bg-[#005696] hover:text-white transition-all cursor-pointer relative group w-full max-w-xs">
                     <div className="hidden md:block absolute -top-8 left-1/2 w-1 h-8 bg-black -z-20 group-hover:bg-[#005696]"></div>
 
-                    <div className="w-20 h-20 mx-auto mb-3 rounded-full border-2 border-current overflow-hidden">
-                      <img src={coord.img} className="w-full h-full object-cover" alt="" />
+                    <div className="w-24 h-24 mx-auto mb-3 rounded-full border-2 border-current overflow-hidden bg-gray-200">
+                      <img src={coord.img} className="w-full h-full object-cover object-top" alt="" />
                     </div>
                     <h4 className="font-bold font-['Space_Grotesk'] text-lg leading-tight mb-1">{coord.name}</h4>
                     <p className="text-xs uppercase tracking-widest font-mono">{coord.role}</p>
+
+                    {/* REMOVED: Inline Fun Fact */}
                   </div>
 
+                  {/* CHILDREN (BIRO) */}
                   {coord.children && (
                     <div className="mt-8 w-full flex flex-col gap-4 items-center relative">
                       <div className="absolute -top-8 left-1/2 w-1 h-8 bg-black border-l-2 border-dashed border-black"></div>
@@ -862,15 +834,20 @@ const StructureAndDepartments = ({ onMemberClick, onDeptClick }) => {
                         <div
                           key={childIdx}
                           onClick={() => onMemberClick(child)}
-                          className="bg-white border-2 border-black p-3 shadow-[4px_4px_0px_0px_#F7941D] cursor-pointer hover:translate-x-1 transition-transform text-left flex items-center gap-3 w-full max-w-xs relative"
+                          className="bg-white border-2 border-black p-3 shadow-[4px_4px_0px_0px_#F7941D] cursor-pointer hover:translate-x-1 transition-transform text-left w-full max-w-xs relative group flex items-center gap-3"
                         >
                           <div className="absolute -top-4 left-1/2 w-0.5 h-4 bg-black"></div>
 
-                          <User size={20} className="shrink-0" />
+                          <div className="w-10 h-10 rounded-full border border-black overflow-hidden shrink-0 bg-gray-200">
+                            <img src={child.img || 'https://images.unsplash.com/photo-1511367461989-f85a21fda167?auto=format&fit=crop&q=80&w=200'} alt={child.name} className="w-full h-full object-cover object-top" />
+                          </div>
+
                           <div>
                             <p className="font-bold text-sm leading-tight">{child.name}</p>
                             <p className="text-[10px] uppercase text-gray-600">{child.role}</p>
                           </div>
+
+                          {/* REMOVED: Hover Fun Fact Tooltip */}
                         </div>
                       ))}
                     </div>
@@ -896,20 +873,15 @@ const StructureAndDepartments = ({ onMemberClick, onDeptClick }) => {
               <div
                 key={idx}
                 onClick={() => onDeptClick(kemenko)}
-                className="group relative bg-white border-4 border-black p-0 h-auto min-h-[420px] flex flex-col hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_#005696] transition-all duration-300 cursor-pointer overflow-hidden"
+                className="group relative bg-white border-4 border-black p-0 h-auto min-h-[450px] flex flex-col hover:-translate-y-2 hover:shadow-[12px_12px_0px_0px_#005696] transition-all duration-300 cursor-pointer overflow-hidden"
               >
                 <div className="bg-black text-white p-4 flex justify-between items-start">
                   <h3 className="font-['Space_Grotesk'] font-bold text-xl uppercase leading-tight w-3/4">{kemenko.title}</h3>
                   <span className="font-mono text-2xl font-bold text-[#F7941D]">0{idx + 1}</span>
                 </div>
 
-                {/* IMAGE AREA: MENGGUNAKAN GROUP IMAGE */}
                 <div className="relative h-48 bg-gray-200 overflow-hidden border-b-4 border-black shrink-0">
-                  <img
-                    src={kemenko.groupImg || kemenko.coordinator.img} // Logic ganti gambar di sini
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                    alt={kemenko.title}
-                  />
+                  <img src={kemenko.groupImg || kemenko.coordinator.img} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" alt={kemenko.title} />
                   <div className="absolute bottom-0 left-0 bg-[#F7941D] text-black text-xs font-bold px-3 py-1 border-t-2 border-r-2 border-black">COORD: {kemenko.coordinator.name}</div>
                 </div>
 
@@ -948,13 +920,8 @@ const StructureAndDepartments = ({ onMemberClick, onDeptClick }) => {
                   <h4 className="font-['Space_Grotesk'] font-bold uppercase text-sm">{item.campus}</h4>
                 </div>
 
-                {/* IMAGE AREA: MENGGUNAKAN GROUP IMAGE */}
                 <div className="h-40 overflow-hidden relative bg-gray-100">
-                  <img
-                    src={item.groupImg || item.img} // Logic ganti gambar di sini
-                    alt={item.campus}
-                    className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500"
-                  />
+                  <img src={item.groupImg || item.img} alt={item.campus} className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" />
                 </div>
 
                 <div className="p-4 text-center flex-1 flex flex-col justify-center">
@@ -963,7 +930,7 @@ const StructureAndDepartments = ({ onMemberClick, onDeptClick }) => {
 
                   <div className="mt-3 pt-3 border-t-2 border-dashed border-gray-300 w-full flex justify-center">
                     <span className="text-[10px] font-bold bg-[#005696] text-white px-2 py-0.5 rounded-full flex items-center gap-1">
-                      <User size={10} /> Lihat Struktur
+                      <User size={10} /> Lihat Profil
                     </span>
                   </div>
                 </div>
@@ -1211,7 +1178,7 @@ const Gallery = () => {
               <div key={`a-${i}`} className="text-4xl md:text-8xl font-black text-black font-['Space_Grotesk'] uppercase flex items-center gap-8">
                 <span>Integrasi Asa</span>
                 <span className="text-white text-stroke-2" style={{ WebkitTextStroke: '2px black' }}>
-                  Politeknik LP3I
+                  Politeknik LP3I Jakarta
                 </span>
               </div>
             ))}
@@ -1220,7 +1187,7 @@ const Gallery = () => {
               <div key={`b-${i}`} className="text-4xl md:text-8xl font-black text-black font-['Space_Grotesk'] uppercase flex items-center gap-8">
                 <span>Integrasi Asa</span>
                 <span className="text-white text-stroke-2" style={{ WebkitTextStroke: '2px black' }}>
-                  Politeknik LP3I
+                  Politeknik LP3I Jakarta
                 </span>
               </div>
             ))}
